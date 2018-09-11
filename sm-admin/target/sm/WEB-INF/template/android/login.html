@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:include="templatelib/androidcss :: css(~{::title},~{})">
+<title>用户登录</title>
+</head>
+<body>
+<div v-cloak id="main" class="main">
+		<header th:include="templatelib/androidcomponent :: header"></header>
+		<div class="content">
+<div class="loginWrap" id="loginWrap">
+	<p class="login-title">账号密码登录</p>
+        <div class="login-input">
+            <img th:src="@{/statics/common/images/inputuser.png}"><input type="text" v-model="user.username" name="username" class="form-control" placeholder="用户名">
+        </div>
+        <div class="login-input">	
+        	<img th:src="@{/statics/common/images/inputpassword.png}"><input type="password" v-model="user.password" name=password class="form-control" placeholder="密码">
+        </div>
+        <div class="input-group text-center" id="error">
+		<input type="hidden" name="remember" checked v-model="user.remember">
+        <button @click="login" class="login-btn" >登录</button>
+        <div class="login-toolbar">
+        <a class="pull-right" th:href="@{/account/register}">注册</a>
+        <a class="pull-right" th:href="@{/account/register}">忘记密码</a>
+        </div>
+        
+        <style>
+        .login-toolbar{
+        width:24rem;
+        margin:auto;
+        }
+        .login-toolbar>a{
+        display:inline-block;
+        vertical-align:bottom;
+        width:11.5rem;
+        font-size:1.2rem;
+        }
+        .login-toolbar>a:last-child{
+        text-align:right;
+        }
+        .login-title{
+        margin:15% 0 10% 0;
+        text-align:center;
+        font-size:1.6rem;
+        }
+        .login-input{
+        border:.1rem solid #e1e1e1;
+        padding:1rem 1rem;
+        width:25rem;
+        margin:0 auto;
+        }
+        .login-input>img,.login-input>input{
+        display:inline-block;
+        vertical-align:bottom;
+        }
+        .login-input>input{
+        border:0;
+        width:20rem;
+        padding:0 1rem;
+        }
+        .login-input>img{
+        width:2rem;
+        height:2rem;
+        }
+        .login-btn{
+        display:block;
+        width:27rem;
+        border-radius:2rem;
+        text-align:center;
+        border:0;
+        background:#66ccff;
+        padding:1rem 1rem;
+        margin:2rem auto;
+        color:white;
+        }
+        </style>
+        </div>
+	</div>
+	</div>
+	</div>
+<div th:include="templatelib/androidjs :: js"></div>
+	<script type="text/javascript">
+    var vm = new Vue({
+        el: '#main',
+        data: {
+        	title : $("title").html(),
+        	user:{
+            username: '',
+            password: '',
+            remember:false
+        	}
+        },
+        beforeCreate: function () {
+            if (self != top) {
+                top.location.href = self.location.href;
+            }
+        },
+        methods: {
+            refreshCode: function () {
+                this.src = "captcha.jpg?t=" + $.now();
+            },
+            login: function (event) {
+            	$.ajax({
+                    type: "POST",
+                    url: "[[@{/account/login}]]",
+                    data: JSON.stringify(vm.user),
+                    dataType:"json",
+                    contentType:"application/json",  
+                    success: function (r) {
+                        if (r.code == 0) {//登录成功
+                        	if(isAndroid()){
+                            parent.location.href = "js://webview?action=goBack";
+                        	}else{
+                        		parent.location.href = transUrl("/android/home.html");
+                        	}
+                        } else {
+                        	tip(r.msg);
+                        }
+                    },
+            	error:function(){
+            		alert("网络异常");
+            	}
+                });
+            }
+        }
+    });
+</script>
+
+</body>
+</html>

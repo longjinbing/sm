@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="templatelib/androidcss :: css(~{::title},~{})">
+<title>商品详情</title>
+</head>
+<body>
+	<div v-cloak id="main" class="main">
+		<header th:include="templatelib/androidcomponent :: header"></header>
+		<div class="content">
+		<div class="goods_wrap">
+			<div class="goods-details-primary-wrap">
+				<img :src="path + goods.primaryPicUrl" />
+			</div>
+
+				<div class="goods-details-title">
+					<span class="goods-details-category-sign">{{goods.categoryName}}</span>{{goods.title}}
+				</div>
+				<h5 class="goods-details-price">
+					<span class="big-price">¥{{goods.price}}</span><b class="goods-details-market-price">原价：{{goods.marketPrice}}</b>
+				</h5>
+				<div class="goods-details-desc">
+					<span class="">快递费：{{goods.shippingFee}}</span>
+					<span class="">销量：{{goods.sellNumber}}</span>
+				</div>
+		</div>
+		<div class="goods_details top10">
+			<h5 class="goods_details_title">商品详情</h5>
+			<div class="content-wrap" v-html="goods.goodsDesc"></div>
+		</div>
+		<div class="shop_service">
+			<h5 class="goods_details_title">商城服务</h5>
+			<div class="content-wrap">
+				<p style="line-height: 1.5em; margin-bottom: 5px; margin-top: 5px;">
+					<strong><span style="font-size: 14px;">运输说明：</span></strong><br>
+				</p>
+				<p style="line-height: 1.5em; margin-bottom: 5px; margin-top: 5px;">
+					<span style="font-size: 14px;">快递公司默认中通、韵达，全国大部分地区包邮。中午12点前下单当日发货，之后订单次日发货，周日及节假日接单不发货。</span>
+				</p>
+				<p style="line-height: 1.5em; margin-bottom: 5px; margin-top: 5px;">
+					<span style="font-size: 14px;">新疆、西藏、青海、海南等较远地区不在包邮范围内，运费由系统自动计算，请谅解。</span>
+				</p>
+				<p style="line-height: 1.5em; margin-bottom: 5px; margin-top: 5px;">
+					<span style="font-size: 14px;"><br></span>
+				</p>
+				<p style="line-height: 1.5em; margin-bottom: 5px; margin-top: 5px;">
+					<strong><span style="font-size: 14px;">退换货说明：</span></strong>
+				</p>
+				<p style="line-height: 1.5em; margin-bottom: 5px; margin-top: 5px;">
+					<span style="font-size: 14px;">1.
+						包裹签收后，不影响二次销售的商品，7天内可退换（塑封不可拆开）。运费由买家个人承担。</span>
+				</p>
+				<p style="line-height: 1.5em; margin-bottom: 5px; margin-top: 5px;">
+					<span style="font-size: 14px;">2.
+						快递签收前请当场开箱验收，如有破损请拒收快件；若您未当场开箱验收，将自动默认为验收成功。接收后，如再发现因运输造成的物件损坏，中医养生馆不承担相关责任。</span>
+				</p>
+				<p style="line-height: 1.5em; margin-bottom: 5px; margin-top: 5px;">
+					<span style="font-size: 14px;">3.&nbsp;因商品本身质量所产生的退换货要求，请于到货7天内联系客服，附上图片及文字描述，退换货发生的运输费用由中医养生馆承担。</span>
+				</p>
+				<p style="line-height: 1.5em; margin-bottom: 5px; margin-top: 5px;">
+					<span style="font-size: 14px;">如因个人原因或使用不当导致商品损坏,
+						退货要求将不予接受。&nbsp;&nbsp;</span>
+				</p>
+				<p style="line-height: 1.5em; margin-bottom: 5px; margin-top: 5px;">
+					<span style="font-size: 14px;">我们将了解需要退货的商品及相关退货信息，在确认商品的情况后，我们将在
+						5 个工作日内为您办理退款操作，实际到账日以银行及支付规则为准。&nbsp;</span>
+				</p>
+				<p style="line-height: 1.5em; margin-bottom: 5px; margin-top: 5px;">
+					<span style="font-size: 14px;">4.
+						由于每件商品的库存有限，可能会出现换货时该商品已缺货的情况，如遇上述情况，将只能作退款处理。</span>
+				</p>
+			</div>
+		</div>
+		<div class="operate-wrap">
+			<button @click="connect" class="connect-btn">
+				<img class="messageimg"
+					th:src="@{/statics/common/images/message.png}" />客服
+			</button><button @click="cart" class="cart-btn">
+				<img class="shopcartimg"
+					th:src="@{/statics/common/images/shopcart.png}" />购物车
+			</button><button @click="addcart(goods.id)" class="add-btn">加入购物车</button>
+		</div>
+	</div>
+	</div>
+	<div th:include="templatelib/androidjs :: js"></div>
+</body>
+<style>
+.goods-details-category-sign{
+vertical-align:top;
+padding:.3rem .5rem .2rem .5rem;
+border:.1rem solid #66ccff;
+color:#66ccff;
+font-size:.8rem;
+font-weight:100;
+font-family:"楷书";
+border-radius:.5rem;
+margin-right:.5rem;
+}
+.content-wrap{
+padding:1rem .5rem;
+}
+.content-wrap img{
+width:100%;
+margin:0 auto;
+border-radius:.5rem;
+}
+.article-content p{
+margin:1rem auto;
+line-height:2rem;
+font-size:1.6rem;
+font-family:"楷书";
+text-indent:2rem;
+}
+</style>
+<script type="text/javascript">
+var vue=new Vue({
+	el:'#main',
+	data:{
+		title:$("title").html(),
+		goods:[],
+		path:transUrl("")
+		},
+	methods:{
+			init:function(){
+				var id="[[${id}]]";
+				var that=this;
+					var url=transUrl("/api/shop/goods/")+id
+					$.get(url, function (r) {
+						if(check(r)){
+							vue.$data.goods=r.data;
+							that.$nextTick(function(){
+								lazyImg();
+								})
+						}
+					});
+				},
+				addcart:function(id){
+					var url=transUrl("/api/shop/addgoodstocart/")+id;
+					$.ajax({
+						  url: url,
+						  data: '',
+						  success: function(r){
+							  if(check(r)){
+								  tip("添加成功");
+							  }
+						  },
+						  error:function(r){
+							  var data=r.responseText;
+							  data=eval('('+data+')');
+							  check(data);
+						  }
+						});
+					},
+				cart:function(id){
+					location.href=transUrl("/android/cart.html/");
+					},
+				connect:function(){
+						tip("客服正忙，请稍后重试");
+					}
+		},
+	created:function(){
+			this.init();
+		},
+		watch:{
+			goods:function(){
+				this.goods.goodsDesc=this.article.goodsDesc.replace(/&nbsp;/ig,'').replace(/(^\s{2,})|(\s{2,}$)/g,"").replace(/\s{2,}/g,"");
+				this.$nextTick(function(){
+					$(".content-wrap p").each(function(){
+						if($(this).find("img").length>0||$(this).text()==$(this).children().text()){
+							$(this).css("text-indent","0")
+						}
+					});
+					img($(".goods-details-primary-wrap img"),{
+						width:34,
+						height:34
+					});
+				})
+			}
+		}
+});
+</script>
+</html>

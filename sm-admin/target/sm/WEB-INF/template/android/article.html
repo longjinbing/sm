@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="templatelib/androidcss :: css(~{::title},~{})">
+<title>好文鉴赏</title>
+</head>
+<body>
+	<div v-cloak id="main" class="main">
+		<header th:include="templatelib/androidcomponent :: header"></header>
+		<div class="content">
+			<div class="list-wrap">
+				<div class="article-item" @click="details(item.id)"
+					v-for="item in articleList">
+					<div v-if="item.catogryId === 6">
+						<div class="right-article-img-wrap">
+							<img :src="path + item.url[0]" />
+						</div>
+						<div class="right-article-desc-wrap">
+							<div class="right-article-title">{{item.title}}</div>
+							<div class="right-article-character">
+								<span><small>{{item.createTime}}</small></span><span><small>{{item.commentcount}}</small>评</span>
+							</div>
+						</div>
+					</div>
+					<div v-if="item.catogryId === 9">
+						<div class="right-article-desc-wrap">
+							<div class="right-article-title">{{item.title}}</div>
+							<div class="right-article-character">
+								<span><small>{{item.createTime}}</small></span><span><small>{{item.commentcount}}</small>评</span>
+							</div>
+						</div>
+						<div class="right-article-img-wrap">
+							<img :src="path + item.url[0]" />
+						</div>
+					</div>
+					<div v-if="item.catogryId === 10">
+						<div class="top-article-title">{{item.title}}</div>
+						<div class="top-article-img-wrap">
+							<div><img :src="path + item.url[0]" /></div>
+							<div><img :src="path + item.url[1]" /></div>
+							<div><img :src="path + item.url[2]" /></div>
+						</div>
+						<div class="right-article-character">
+								<span><small>{{item.createTime}}</small></span><span><small>{{item.commentcount}}</small>评</span>
+						</div>
+					</div>
+					<div v-if="item.catogryId === 7">
+						<div class="top-article-title">{{item.title}}</div>
+						<div class="center-article-img-wrap">
+							<img :src="path + item.url[0]" />
+						</div>
+						<div class="right-article-character">
+								<span><small>{{item.createTime}}</small></span><span><small>{{item.commentcount}}</small>评</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<style>
+.article-item {
+	width: 33rem;
+	margin: .5rem auto;
+	padding: 1rem .5rem 1rem .5rem;
+	border-radius: 5px;
+	border-bottom: .2rem solid #ededed;
+}
+
+.right-article-desc-wrap, .right-article-img-wrap {
+	display: inline-block;
+	vertical-align: top;
+}
+
+.right-article-desc-wrap {
+	width: 22rem;
+	position: relative;
+}
+
+.right-article-character {
+	height: 2rem;
+	vertical-align: bottom;
+}
+
+.right-article-character>span {
+	display: inline-block;
+	vertical-align: bottom;
+	font-size: .8rem;
+	font-weight: 300;
+	color: #968f8f;
+	margin-right: 1rem;
+}
+
+.right-article-title {
+	font-size: 1.3rem;
+	line-height: 1.8rem;
+	font-weight: 300;
+	height: 5rem;
+}
+
+.right-article-img-wrap {
+	width: 9rem;
+	height: 7rem;
+	margin:0 .5rem;
+	border-radius: .5rem;
+	overflow:hidden;
+}
+
+.right-article-img-wrap>img {
+	width: 100%;
+	height: 100%;
+	border-radius: .5rem;
+}
+
+.top-article-title {
+	font-size: 1.3rem;
+	line-height: 2.2rem;
+	font-weight: 300;
+	margin-bottom:.3rem;
+}
+.top-article-img-wrap {
+	width: 33rem;
+	height: 7rem;
+}
+
+.top-article-img-wrap>div {
+	width: 10.4rem;
+	height: 100%;
+	border-radius: .5rem;
+	margin:0 .1rem;
+	display:inline-block;
+	overflow:hidden;
+}
+
+.top-article-img-wrap>div>img {
+	width: 10.4rem;
+	height: 100%;
+	overflow:hidden;
+}
+
+.center-article-img-wrap{
+	width: 100%;
+	height: 10rem;
+	border-radius: .5rem;
+	overflow:hidden;
+}
+.center-article-img-wrap>img {
+	width: 100%;
+	height: 100%;
+	border-radius: .5rem;
+}
+
+</style>
+	<div th:include="templatelib/androidjs :: js"></div>
+</body>
+<script type="text/javascript">
+	var vue = new Vue({
+		el : '#main',
+		data : {
+			title : $("title").html(),
+			articleList : [],
+			path : transUrl("")
+		},
+		methods : {
+			init : function() {
+				var that = this;
+				var url = transUrl("/api/article/listbyids?ids=6,7,9,10");
+				$.get(url, function(r) {
+					if (check(r)) {
+						$.each(r.page.records, function(index, item) {
+							var obj = item;
+							if(item.url!=null){
+							obj.createTime = transPublishTime(item.createTime);
+							var url=item.url.toString();
+							obj.url=url.split(',');
+							vue.$data.articleList.push(obj)
+							}
+						})
+					}
+				});
+			},
+			details : function(id) {
+				location.href = transUrl("/api/article/article/") + id;
+			}
+		},
+		created : function() {
+			this.init();
+		},
+		watch:{
+			articleList:function(){
+				this.$nextTick(function(){
+					img($(".right-article-img-wrap img"),{width:9,height:7});
+					img($(".top-article-img-wrap img"),{width:10.4,height:8});
+					img($(".center-article-img-wrap img"),{width:33,height:10});
+				});
+			}
+		},
+		mounted : function() {
+		}
+	});
+</script>
+</html>

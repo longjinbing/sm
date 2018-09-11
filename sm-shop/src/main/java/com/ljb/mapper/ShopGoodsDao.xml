@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ljb.mapper.ShopGoodsDao">
+
+    <resultMap type="com.ljb.entity.ShopGoods" id="shopGoodsMap">
+        <result property="id" column="id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="goodsSn" column="goods_sn"/>
+        <result property="title" column="title"/>
+        <result property="goodsDesc" column="goods_desc"/>
+        <result property="primaryPicUrl" column="primary_pic_url"/>
+        <result property="listPicUrl" column="list_pic_url"/>
+        <result property="sellNumber" column="sell_number"/>
+        <result property="character" column="character"/>
+        <result property="price" column="price"/>
+        <result property="marketPrice" column="market_price"/>
+        <result property="createId" column="create_id"/>
+        <result property="updateId" column="update_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="shippingFee" column="shipping_fee"/>
+    </resultMap>
+
+	<sql id="Base_Column_List">
+		`id`,
+		`category_id`,
+		`goods_sn`,
+		`title`,
+		`goods_desc`,
+		`primary_pic_url`,
+		`list_pic_url`,
+		`sell_number`,
+		`character`,
+		`price`,
+		`market_price`,
+		`create_id`,
+		`update_id`,
+		`create_time`,
+		`update_time`,
+		`shipping_fee`	</sql>
+	
+	<select id="select" resultMap="unionMap">
+		select
+    	shop_goods.`id`,    	shop_goods.`category_id`,shop_category.`name` as category_name,    	shop_goods.`goods_sn`,    	shop_goods.`title`,    	shop_goods.`goods_desc`,    	shop_goods.`primary_pic_url`,    	shop_goods.`list_pic_url`,    	shop_goods.`sell_number`,    	shop_goods.`character`,    	shop_goods.`price`,    	shop_goods.`market_price`,		c.`username` as `create_name`,		u.`username` as `update_name`,    	shop_goods.`create_time`,    	shop_goods.`update_time`,    	shop_goods.`shipping_fee`		from shop_goods
+		left join sys_user as c on c.`id`=shop_goods.`create_id`
+		left join sys_user as u on u.`id`=shop_goods.`update_id`
+		left join shop_category on shop_category.`id`=shop_goods.`category_id`
+		where shop_goods.`id` = #{id}
+	</select>
+	
+	<select id="queryListByConstitution" resultMap="listMap">
+		select
+		shop_goods.`id`,    	shop_goods.`category_id`,shop_category.`name` as category_name,    	shop_goods.`goods_sn`,    	shop_goods.`title`,    	shop_goods.`goods_desc`,    	shop_goods.`primary_pic_url`,    	shop_goods.`list_pic_url`,    	shop_goods.`sell_number`,    	shop_goods.`character`,    	shop_goods.`price`,    	shop_goods.`market_price`,	  	shop_goods.`shipping_fee`
+		,shop_category.`name` as category_name
+		from shop_goods,shop_category
+		where shop_category.`id`=shop_goods.`category_id` AND shop_category.`name` LIKE concat('%',#{value},'%')
+		 <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by `create_time` desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+    </select>
+    
+    <select id="selectByPage" resultMap="listMap">
+		select
+		shop_goods.`id`,    	shop_goods.`category_id`,shop_category.`name` as category_name,    	shop_goods.`goods_sn`,    	shop_goods.`title`,    	shop_goods.`goods_desc`,    	shop_goods.`primary_pic_url`,    	shop_goods.`list_pic_url`,    	shop_goods.`sell_number`,    	shop_goods.`character`,    	shop_goods.`price`,    	shop_goods.`market_price`,	       	shop_goods.`shipping_fee`
+		,shop_category.`name` as category_name
+		from shop_goods,shop_category
+		where shop_category.`id`=shop_goods.`category_id`
+		<if test="text != null and text.trim() != ''">
+			AND #{field} LIKE concat('%',#{text},'%')
+		</if>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+    </select>
+
+ 	<select id="selectTotal" resultType="int">
+		select count(*) from shop_goods
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+	</select>
+	
+	<select id="selectOne" parameterType="com.ljb.query.ShopGoodsQuery" resultMap="shopGoodsMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from shop_goods
+    <if test="_parameter != null">
+      <include refid="Query_Where_Clause" />
+    </if>
+   	limit 0,1
+  	</select>
+	
+	<select id="selectByQuery" parameterType="com.ljb.query.ShopGoodsQuery" resultMap="shopGoodsMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from shop_goods
+    <if test="_parameter != null">
+      <include refid="Query_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  	</select>
+  	
+  	<select id="countByQuery" parameterType="com.ljb.query.ShopGoodsQuery" resultType="java.lang.Integer">
+    select count(*) from sys_region
+    <if test="_parameter != null">
+      <include refid="Query_Where_Clause" />
+    </if>
+  	</select>
+  	
+  	<delete id="deleteByQuery" parameterType="com.ljb.query.ShopGoodsQuery">
+    delete from shop_goods
+    <if test="_parameter != null">
+      <include refid="Query_Where_Clause" />
+    </if>
+  	</delete>
+		
+	<sql id="Query_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+         </trim>
+        </if>
+     </foreach>
+    </where>
+  	</sql>
+  	<resultMap type="java.util.HashMap" id="unionMap">
+		<result property="id" column="id"/>
+		<result property="categoryId" column="category_id"/>
+		<result property="goodsSn" column="goods_sn"/>
+		<result property="title" column="title"/>
+		<result property="goodsDesc" column="goods_desc"/>
+		<result property="primaryPicUrl" column="primary_pic_url"/>
+		<result property="listPicUrl" column="list_pic_url"/>
+		<result property="sellNumber" column="sell_number"/>
+		<result property="character" column="character"/>
+		<result property="price" column="price"/>
+		<result property="marketPrice" column="market_price"/>
+		<result property="createName" column="create_name"/>
+		<result property="updateName" column="update_name"/>
+		<result property="createTime" column="create_time"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="shippingFee" column="shipping_fee"/>
+		<result property="categoryName" column="category_name"/>
+    </resultMap>
+    <resultMap type="java.util.HashMap" id="listMap">
+		<result property="id" column="id"/>
+		<result property="categoryId" column="category_id"/>
+		<result property="goodsSn" column="goods_sn"/>
+		<result property="title" column="title"/>
+		<result property="goodsDesc" column="goods_desc"/>
+		<result property="primaryPicUrl" column="primary_pic_url"/>
+		<result property="listPicUrl" column="list_pic_url"/>
+		<result property="sellNumber" column="sell_number"/>
+		<result property="character" column="character"/>
+		<result property="price" column="price"/>
+		<result property="marketPrice" column="market_price"/>
+		<result property="shippingFee" column="shipping_fee"/>
+		<result property="categoryName" column="category_name"/>
+    </resultMap>
+</mapper>

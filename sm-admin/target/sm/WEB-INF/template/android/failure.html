@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="templatelib/css :: css(~{::title},~{})" >
+<title>测试结果</title>
+</head>
+<body>
+	<div v-cloak id="main" class="main">
+		<header th:include="templatelib/androidcomponent :: header"></header>
+		<div class="content">
+			<h3 style="margin-top:50px;" class="text-center text-warning">非常抱歉!</h3>
+			<p class="text-center">由于遇到未知原因,本次测试失败</p>
+			<a style="margin-top:50px; width:30%;"  th:href="@{/android/constiutiontest.html}" class="btn btn-main center-block btn-sm">重新测试</a>
+	</div>
+	</div>
+	<div th:include="templatelib/js :: js" ></div>
+	<div th:include="templatelib/echarts :: js" ></div>
+</body>
+<script>
+var vue=new Vue({
+el:"#main",
+data:{
+	title : $("title").html()
+},
+methods:{
+	init:function(){	
+	}
+},
+created:function(){
+	this.init();
+}
+});
+</script>
+</html>

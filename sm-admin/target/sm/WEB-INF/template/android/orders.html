@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="templatelib/androidcss :: css(~{::title},~{})">
+<title>我的订单</title>
+</head>
+<body>
+	<div v-cloak id="main" class="main">
+		<header th:include="templatelib/androidcomponent :: header"></header>
+		<div class="content">
+		<section class="aui-scrollView">
+			<div class="aui-tab" data-ydui-tab="">
+				<ul class="tab-nav">
+					<li class="tab-nav-item tab-active"><a href="javascript:;">全部</a>
+					</li>
+					<li class="tab-nav-item"><a href="javascript:;">待付款</a></li>
+					<li class="tab-nav-item"><a href="javascript:;">待收货</a></li>
+					<li class="tab-nav-item"><a href="javascript:;">已完成</a></li>
+					<li class="tab-nav-item"><a href="javascript:;">已取消</a></li>
+				</ul>
+				<div class="divHeight"></div>
+				<div class="tab-panel">
+					<div class="tab-panel-item tab-active">
+						<div v-if="orderList.length === 0 " class="tips">暂时没有订单，请先去购物吧</div>
+						<div class="tab-item" @click="details(item.id)"
+							v-for="item in orderList">
+							<a href="javascript:void(0);"
+								class="aui-well-item aui-well-item-clear">
+								<div class="aui-well-item-bd">
+									<h3>自营店</h3>
+								</div> <span class="aui-well-item-fr">{{item.status}}</span>
+							</a>
+							<div class="aui-mail-product">
+								<a href="javascript:;" class="aui-mail-product-item">
+									<div class="aui-mail-product-item-hd">
+										<img :src="path + item.list.picUrl" alt="">
+									</div>
+									<div class="aui-mail-product-item-bd">
+										<p>{{item.list.title}}</p>
+									</div>
+								</a>
+							</div>
+							<div>
+								<p class="aui-mail-payment">
+									实付款: <span>￥{{item.orderPrice}}</span>
+								</p>
+								<div class="aui-mail-button">
+									<a @click="details(item.id)" href="javascript:;">订单详情</a>
+								</div>
+							</div>
+
+						</div>
+					</div>
+					<div class="tab-panel-item">
+						<div v-if="payingList.length === 0 " class="tips">暂时没有订单，请先去购物吧</div>
+						<div class="tab-item" @click="details(item.id)"
+							v-for="item in payingList">
+							<a href="javascript:void(0);"
+								class="aui-well-item aui-well-item-clear">
+								<div class="aui-well-item-bd">
+									<h3>自营店</h3>
+								</div> <span class="aui-well-item-fr">{{item.status}}</span>
+							</a>
+							<div class="aui-mail-product">
+								<a href="javascript:;" class="aui-mail-product-item">
+									<div class="aui-mail-product-item-hd">
+										<img th:src="@{/statics/common/images/goods-default.png}"
+											:data-src="path + item.list.picUrl" alt="">
+									</div>
+									<div class="aui-mail-product-item-bd">
+										<p>{{item.list.title}}</p>
+									</div>
+								</a>
+							</div>
+							<div>
+								<p class="aui-mail-payment">
+									实付款: <span>￥{{item.orderPrice}}</span>
+								</p>
+								<div class="aui-mail-button">
+									<a @click="details(item.id)" href="javascript:;">订单详情</a>
+								</div>
+							</div>
+						</div>
+
+					</div>
+					<div class="tab-panel-item">
+						<div v-if="waitingList.length === 0 " class="tips">暂时没有订单，请先去购物吧</div>
+						<div class="tab-item" @click="details(item.id)"
+							v-for="item in waitingList">
+							<a href="javascript:void(0);"
+								class="aui-well-item aui-well-item-clear">
+								<div class="aui-well-item-bd">
+									<h3>自营店</h3>
+								</div> <span class="aui-well-item-fr">{{item.status}}</span>
+							</a>
+							<div class="aui-mail-product">
+								<a href="javascript:;" class="aui-mail-product-item">
+									<div class="aui-mail-product-item-hd">
+										<img th:src="@{/statics/common/images/goods-default.png}"
+											:data-src="path + item.list.picUrl" alt="">
+									</div>
+									<div class="aui-mail-product-item-bd">
+										<p>{{item.list.title}}</p>
+									</div>
+								</a>
+							</div>
+							<div>
+								<p class="aui-mail-payment">
+									实付款: <span>￥{{item.orderPrice}}</span>
+								</p>
+								<div class="aui-mail-button">
+									<a @click="details(item.id)" href="javascript:;">订单详情</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="tab-panel-item">
+						<div v-if="completeList.length === 0 " class="tips">暂时没有订单，请先去购物吧</div>
+						<div class="tab-item" @click="details(item.id)"
+							v-for="item in completeList">
+							<a href="javascript:void(0);"
+								class="aui-well-item aui-well-item-clear">
+								<div class="aui-well-item-bd">
+									<h3>自营店</h3>
+								</div> <span class="aui-well-item-fr">{{item.status}}</span>
+							</a>
+							<div class="aui-mail-product">
+								<a href="javascript:;" class="aui-mail-product-item">
+									<div class="aui-mail-product-item-hd">
+										<img th:src="@{/statics/common/images/goods-default.png}"
+											:data-src="path + item.list.picUrl" alt="">
+									</div>
+									<div class="aui-mail-product-item-bd">
+										<p>{{item.list.title}}</p>
+									</div>
+								</a>
+							</div>
+							<div>
+								<p class="aui-mail-payment">
+									实付款: <span>￥{{item.orderPrice}}</span>
+								</p>
+								<div class="aui-mail-button">
+									<a @click="details(item.id)" href="javascript:;">订单详情</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="tab-panel-item">
+
+						<div v-if="cancelList.length === 0 " class="tips">暂时没有订单，请先去购物吧</div>
+						<div class="tab-item" @click="details(item.id)"
+							v-for="item in cancelList">
+							<a href="javascript:void(0);"
+								class="aui-well-item aui-well-item-clear">
+								<div class="aui-well-item-bd">
+									<h3>自营店</h3>
+								</div> <span class="aui-well-item-fr">{{item.status}}</span>
+							</a>
+							<div class="aui-mail-product">
+								<a href="javascript:;" class="aui-mail-product-item">
+									<div class="aui-mail-product-item-hd">
+										<img th:src="@{/statics/common/images/goods-default.png}"
+											:data-src="path + item.list.picUrl" alt="">
+									</div>
+									<div class="aui-mail-product-item-bd">
+										<p>{{item.list.title}}</p>
+									</div>
+								</a>
+							</div>
+							<div>
+								<p class="aui-mail-payment">
+									实付款: <span>￥{{item.orderPrice}}</span>
+								</p>
+								<div class="aui-mail-button">
+									<a @click="details(item.id)" href="javascript:;">订单详情</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+</div>
+	</div>
+	<div th:include="templatelib/androidjs :: js"></div>
+	<script th:src="@{/statics/android/tab.js}"></script>
+</body>
+<script type="text/javascript">
+	var vue = new Vue({
+		el : '#main',
+		data : {
+			title : $("title").html(),
+			orderList : [],
+			payingList:[],
+			paiedList:[],
+			waitingList:[],
+			completeList:[],
+			cancelList:[],
+			path : transUrl("")
+		},
+		methods : {
+			init : function() {
+				var that = this;
+				var url = transUrl("/api/shop/orderlist");
+				$.ajax({
+					  url: url,
+					  data: '',
+					  success: function(r){
+						  if(check(r)){
+							  vue.$data.orderList = r.list;
+								that.$nextTick(function() {
+									lazyImg();
+								});
+						  }
+					  },
+					  error:function(r){
+						  var data=r.responseText;
+						  data=eval('('+data+')');
+						  check(data);
+					  }
+					});
+			},
+			details : function(id) {
+				location.href = transUrl("/api/shop/order/") + id;
+			}
+		},
+		created : function() {
+			this.init();
+		},
+		mounted : function() {
+		},
+		watch:{
+			orderList:{
+					handler: function (newVal) {
+						vue.$data.payingList=[];
+						vue.$data.paiedList=[];
+						vue.$data.waitingList=[];
+						vue.$data.completeList=[];
+						vue.$data.cancelList=[];
+						$.each(vue.$data.orderList,function(index,item){
+							var obj=item;
+							switch(item.status){
+							case 1:
+								obj.status="待付款";
+								vue.$data.payingList[vue.$data.payingList.length]=obj;
+								console.log(vue.$data.payingList.length);
+								break;
+							case 2:
+								obj.status="已付款";
+								vue.$data.paiedList.push(obj);
+								break;
+							case 3:
+								obj.status="已发货";
+								vue.$data.waitingList.push(obj);
+								break;
+							case 3:
+								obj.status="订单完成";
+								vue.$data.completeList.push(obj);
+								break;
+							case 4:
+								obj.status="退款审核中";
+								break;
+							case 5:
+								obj.status="已取消";
+								vue.$data.cancelList.push(obj);
+								break;
+							}
+							vue.$data.orderList[index]=obj;
+						});
+					    },      
+					deep: true    //深度监听
+					} 
+			}
+	});
+</script>
+</html>

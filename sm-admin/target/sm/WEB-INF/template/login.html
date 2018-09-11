@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html  xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head th:include="templatecss :: css(~{::title},~{})" >
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>登录</title>
+<!-- Tell the browser to be responsive to screen width -->
+<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+	name="viewport">
+</head>
+<body style="background:black;">
+<div class="loginWrap col-md-4" id=loginWrap style="width:500px; height:350px; position:absolute;top:35%;left:50%;margin-top:-150px;margin-left:-250px; padding:30px 80px 80px 80px;  background:white;">
+	<form class="bs-example bs-example-form" id="loginForm" :model="user" role="form">
+		<h2 class="text-center">用户登录</h2>
+		<br>
+        <div class="input-group">
+            <span class="input-group-addon"><i class=" glyphicon glyphicon-user"></i></span>
+            <input type="text" v-model="user.username" name="username" class="form-control" placeholder="用户名">
+        </div>
+        <br>
+        <div class="input-group">
+            <span class="input-group-addon "><i class="glyphicon glyphicon-edit"></i></span>
+            <input type="password" v-model="user.password" name=password class="form-control" placeholder="密码">
+        </div>
+        <br>
+   		<div class="input-group">
+		     <input type="checkbox" name="remember" v-model="user.remember"><label class="control-label">请记住我</label>
+		</div>
+        <br>
+        <input type="submit" class="btn btn-block btn-primary" value="登录"/>
+        <a class="pull-right" th:href="@{/account/register}">注册</a>
+        <div class="input-group text-center" id="error">
+        </div>
+    </form>
+	</div>
+<div th:include="templatejs :: js" ></div>
+	<script type="text/javascript">
+    var vm = new Vue({
+        el: '#loginWrap',
+        data: {
+        	user:{
+            username: '',
+            password: '',
+            remember:false
+        	}
+        },
+        beforeCreate: function () {
+            if (self != top) {
+                top.location.href = self.location.href;
+            }
+        },
+        methods: {
+            refreshCode: function () {
+                this.src = "captcha.jpg?t=" + $.now();
+            },
+            login: function (event) {
+            	$.ajax({
+                    type: "POST",
+                    url: "[[@{/account/login}]]",
+                    data: JSON.stringify(vm.user),
+                    dataType:"json",
+                    contentType:"application/json",  
+                    success: function (r) {
+                        if (r.code == 0) {//登录成功
+                            parent.location.href = '[[@{/admin/index.html}]]';
+                        } else {
+                        	$("#error").html('<label id="password-error" class="error" for="password">'+r.msg+'</label>');
+                        }
+                    },
+            	error:function(){
+            		alert("网络异常");
+            	}
+                });
+            }
+        }
+    });
+    $(function(){
+    	$("#loginForm").validate({
+            rules: {
+              username: {
+                required: true,
+                minlength: 6
+              },
+              password: {
+                required: true,
+                minlength: 6
+              }
+            },
+            messages: {
+              username: {
+                required: "请输入用户名",
+                minlength: "用户名至少由六个字母组成"
+              },
+              password: {
+                required: "请输入密码",
+                minlength: "密码长度不能小于 6个字母"
+              }
+            },
+            submitHandler:function(form){  
+                vm.login();
+            },
+            errorPlacement: function(error, element) {
+                error.appendTo($("#error")); 
+            }
+    	});
+    	
+    })
+</script>
+
+</body>
+</html>

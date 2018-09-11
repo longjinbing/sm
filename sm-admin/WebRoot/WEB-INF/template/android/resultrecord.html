@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="templatelib/androidcss :: css(~{::title},~{})" >
+<title>测试记录</title>
+</head>
+<body>
+	<div v-cloak id="main" class="main">
+		<header th:include="templatelib/androidcomponent :: header"></header>
+		<div class="content">
+			<div v-for="item in constitutionResult">
+			<div class="constitution-title">测试时间:{{item.createTime}}</div>
+			<div class="constitution-content">
+				<div :id="item.id" style="width:100%;margin-top:-50px;text-center:center; height:200px;"></div>
+			<div style="text-align:center; margin:0 5px 20px 5px;">主体质:<span class="primary-color">{{item.names[0]}}</span> &nbsp &nbsp 转化体质:<span class="primary-color">{{item.names[1]}}</span></div>
+			</div>
+			</div>
+			<div class="bottom-tip">没有更多了</div>
+	</div>
+	</div>
+	<div th:include="templatelib/androidjs :: js" ></div>
+	<div th:include="templatelib/echarts :: js" ></div>
+</body>
+<script>
+var vue=new Vue({
+el:"#main",
+data:{
+	constitutionResult:[],
+	title : $("title").html()
+},
+methods:{
+	init:function(){
+		  	//获取结果信息
+			var url=transUrl("/api/constitution/resultlist");
+			$.get(url, function (r) {
+				if(check(r)){
+					$.each(r.page.records,function(index,item){
+						url=url=transUrl("/constitution/info/")+item.constitutionId;
+						$.get(url, function (re) {
+							if(check(re)){
+								url=transUrl("/resultdetails/resultdetails/")+item.id;
+								$.get(url, function (res) {
+									if(check(res)){
+										var cur={
+												"id":"e"+item.id,
+												"createTime":item.createTime,
+												"resultId":re.constitution.name,
+												"names":res.data.names,
+												"results":res.data.results
+												};
+										vue.$data.constitutionResult.push(cur);
+										setTimeout(function(){ initEcharts(res.data.names,res.data.results,"e"+item.id);},500);;
+									}
+								});
+							}
+						});
+						});
+				}
+			});
+	}
+},
+created:function(){
+	this.init();
+}
+});
+
+function initEcharts(names,results,id){
+var myChart = echarts.init(document.getElementById(id));
+	myChart.setOption({
+		color: ['#3398DB'],
+	    xAxis: {
+	        type: 'category',
+	        data: names,
+	       	axisLine:{
+				show:false
+		    },
+	        axisTick: {
+		        show:false
+            },
+	        axisLabel : {
+                interval:0,
+                textStyle:{
+                    fontSize:8,
+                    fontWeight:100
+                }
+            }
+	    },
+	    yAxis: {
+	        type: 'value',
+	        show:false
+	    },
+	    series: [{
+	        data: results,
+	        type: 'bar',
+	        itemStyle: {
+                normal: {
+                    color: function(params) {
+                        var colorList = [
+                           '#66ccff','#99CC66','#0099CC','#27727B',
+                           '#FF9933','#9BCA63','#FAD860','#006699','#60C0DD'
+                        ];
+                        return colorList[params.dataIndex]
+                    },
+                }
+            },
+	    }]
+	});
+}
+</script>
+</html>

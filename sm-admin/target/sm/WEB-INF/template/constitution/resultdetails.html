@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="templatelib/css :: css(~{::title},~{})" >
+<title>体质测试结果详情</title>
+</head>
+<body>
+	<div class="body-content">
+		<div id="content">
+			<div id="toolbar">
+				<div class="searchTextWrap">
+					<select id="searchField" class="searchField">
+						<option value="resultId">结果id</option>
+						<option value="constitutionId">体质id</option>
+						<option value="result">分值</option>
+					</select> <input class="searchText" id="searchText" type="text" placeholder="搜索">
+					<button type="button" @click="reload " class="btn btn-default">搜索</button>
+				</div>
+				<button shiro:hasPermission="resultdetails:save"
+					type="button" class="btn btn-success" @click="addForm">
+					<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+				</button>
+				<button shiro:hasPermission="resultdetails:update"
+					type="button" class="btn btn-warning" @click="editForm">
+					<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>选择修改
+				</button>
+				<button shiro:hasPermission="resultdetails:details"
+					type="button" class="btn btn-warning" @click="details">详情
+				</button>
+				<button  shiro:hasPermission="resultdetails:delete"
+					type="button" class="btn btn-danger" @click="deleteData">
+					<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>选择删除
+				</button>
+				<div class="btn-group" shiro:hasPermission="resultdetails:export">
+					<button type="button" class="btn btn-primary dropdown-toggle"
+						data-toggle="dropdown">
+						<span class="glyphicon glyphicon-share" aria-hidden="true"></span>导出数据
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li><a @click='exportData("excel")' href="#">导出为Excel</a></li>
+						<li><a @click='exportData("doc")' href="#">导出为WORD</a></li>
+					</ul>
+				</div>
+			</div>
+			<table id="datatable"></table>
+			<div id="formwrap" class="formwrap">
+				<form class="form-horizontal" v-modal="resultDetails" id="modal-form"
+					role="form">
+					<div class="form-group">
+						<label for="结果id" class="col-sm-2 control-label">结果id</label>
+						<div class="col-sm-7">
+							<input type="text" class="form-control"
+								v-model="resultDetails.resultId"
+								name="resultId" id="resultId"
+								placeholder="结果id">
+						</div>
+						<div class="col-md-3"></div>
+					</div>
+					<div class="form-group">
+						<label for="体质id" class="col-sm-2 control-label">体质id</label>
+						<div class="col-sm-7">
+							<input type="text" class="form-control"
+								v-model="resultDetails.constitutionId"
+								name="constitutionId" id="constitutionId"
+								placeholder="体质id">
+						</div>
+						<div class="col-md-3"></div>
+					</div>
+					<div class="form-group">
+						<label for="分值" class="col-sm-2 control-label">分值</label>
+						<div class="col-sm-7">
+							<input type="text" class="form-control"
+								v-model="resultDetails.result"
+								name="result" id="result"
+								placeholder="分值">
+						</div>
+						<div class="col-md-3"></div>
+					</div>
+					<div class="form-group">
+						<div class="col-md-12 text-center">
+							<button type="submit" class="btn btn-success">保存</button>
+							<input type="reset" class="btn btn-primary" value="重置" />
+							<button type="button" class="btn btn-default pull-right  layui-layer-close">关闭</button>
+						</div>
+					</div>
+					<div id="error" class="text-center"></div>
+				</form>
+			</div>
+			<div id="detailswrap" class="detailswrap">
+					<div class="form-group">
+						<label for="结果id" class="col-sm-3 control-label">结果id：</label>
+						<div class="col-sm-9">
+							<p class="form-control-static">{{resultDetails.resultId}}</p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="体质id" class="col-sm-3 control-label">体质id：</label>
+						<div class="col-sm-9">
+							<p class="form-control-static">{{resultDetails.constitutionId}}</p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="分值" class="col-sm-3 control-label">分值：</label>
+						<div class="col-sm-9">
+							<p class="form-control-static">{{resultDetails.result}}</p>
+						</div>
+					</div>
+			</div>
+		</div>
+	</div>
+	<div th:include="templatelib/js :: js" ></div>
+	<script th:src="@{/statics/constitution/resultdetails.js}"></script>
+</body>
+</html>

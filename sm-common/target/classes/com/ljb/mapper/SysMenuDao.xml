@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ljb.mapper.SysMenuDao">
+
+    <resultMap type="com.ljb.entity.SysMenu" id="sysMenuMap">
+        <result property="id" column="id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="name" column="name"/>
+        <result property="url" column="url"/>
+        <result property="perms" column="perms"/>
+        <result property="type" column="type"/>
+        <result property="icon" column="icon"/>
+        <result property="orderNum" column="order_num"/>
+        <result property="status" column="status"/>
+        <result property="updateId" column="update_id"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+	<sql id="Base_Column_List">
+		`id`,
+		`parent_id`,
+		`name`,
+		`url`,
+		`perms`,
+		`type`,
+		`icon`,
+		`order_num`,
+		`status`,
+		`update_id`,
+		`update_time`	</sql>
+	
+	<select id="menuByUserId" resultMap="sysMenuMap">
+	SELECT DISTINCT(sys_menu.`id`),sys_menu.* 
+	FROM sys_user_role,sys_role_menu,sys_menu 
+	WHERE sys_menu.`id`=sys_role_menu.`menu_id`
+	AND sys_menu.`type` in ('1','2') 
+	AND sys_role_menu.`role_id`=sys_user_role.`role_id` 
+	AND sys_user_role.`user_id`=#{value}
+	</select>	
+	
+	<select id="menuListByUserId" resultMap="sysMenuMap">
+	SELECT DISTINCT(sys_menu.`id`),sys_menu.* 
+	FROM sys_user_role,sys_role_menu,sys_menu 
+	WHERE sys_menu.`id`=sys_role_menu.`menu_id`
+	AND sys_menu.`type` IN('0','1')
+	AND sys_menu.`status`='1'
+	AND sys_role_menu.`role_id`=sys_user_role.`role_id` 
+	AND sys_user_role.`user_id`=#{value}
+	</select>
+	
+	<select id="allListByUserId" resultMap="sysMenuMap">
+	SELECT DISTINCT(sys_menu.`id`),sys_menu.* 
+	FROM sys_user_role,sys_role_menu,sys_menu 
+	WHERE sys_menu.`id`=sys_role_menu.`menu_id`
+	AND sys_role_menu.`role_id`=sys_user_role.`role_id` 
+	AND sys_user_role.`user_id`=#{value}
+	</select>
+	
+	<select id="allListByRoleId" resultMap="sysMenuMap">
+	SELECT DISTINCT(sys_menu.`id`),sys_menu.* 
+	FROM sys_role_menu,sys_menu 
+	WHERE sys_menu.`id`=sys_role_menu.`menu_id`
+	AND sys_role_menu.`role_id`=#{value} 
+	</select>			
+		
+	<select id="selectOne" parameterType="com.ljb.query.SysMenuQuery" resultMap="sysMenuMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sys_menu
+    <if test="_parameter != null">
+      <include refid="Query_Where_Clause" />
+    </if>
+   	limit 0,1
+  	</select>
+	
+	<select id="selectByQuery" parameterType="com.ljb.query.SysMenuQuery" resultMap="sysMenuMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sys_menu
+    <if test="_parameter != null">
+      <include refid="Query_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  	</select>
+  	
+  	<select id="countByQuery" parameterType="com.ljb.query.SysMenuQuery" resultType="java.lang.Integer">
+    select count(*) from sys_region
+    <if test="_parameter != null">
+      <include refid="Query_Where_Clause" />
+    </if>
+  	</select>
+  	
+  	<delete id="deleteByQuery" parameterType="com.ljb.query.SysMenuQuery">
+    delete from sys_menu
+    <if test="_parameter != null">
+      <include refid="Query_Where_Clause" />
+    </if>
+  	</delete>
+		
+	<sql id="Query_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+         </trim>
+        </if>
+     </foreach>
+    </where>
+  	</sql>
+  		
+</mapper>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="templatelib/androidcss :: css(~{::title},~{})">
+<title>今日宜忌</title>
+</head>
+<body>
+	<div v-cloak id="main" class="main">
+		<header th:include="templatelib/androidcomponent :: header"></header>
+		<div class="content">
+			<div class="home-time" @click="url()">
+				<div class="">
+					<p class="time-day">{{time.Day}}</p>
+					<p class="time-year-month">{{time.year}} / {{time.month}}</p>
+					<p class="time-n-info">
+						{{time.n_year+"年"+time.n_month+time.n_day}}
+					</p>
+				</div>
+				<div class="time-yi-ji">
+					<p class="time-yi">
+						<small>宜</small><span>{{time.yi.title}}</span>
+					</p>
+					<p class="time-desc">{{time.yi.desc}}</p>
+					<p class="time-ji">
+						<small>忌</small><span>{{time.ji.title}}</span>
+					</p>
+					<p class="time-desc">{{time.ji.desc}}</p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<style>
+	.time-desc{
+	text-indent:2.8rem;
+	}
+	.time-yi-ji {
+	padding: 2rem 0 0 0;
+}
+.time-yi-ji>p{
+font-size: 1.4rem;
+	line-height: 2rem;
+	font-weight:100;
+	}
+
+.home-time {
+	border-right: .1rem solid #f2f2f2;
+	padding-top: 1rem;
+}
+
+.home-time>div {
+padding:1rem 1rem;
+}
+
+.time-yi>small, .time-ji>small {
+	display: inline-block;
+	width: 3rem;
+	height: 3rem;
+	text-align: center;
+	line-height: 3rem;
+	background: #26a3e1;
+	color: white;
+	border-radius: 1.5rem;
+	margin: 0 auto;
+	font-size: 1.2rem;
+}
+
+.time-yi>span, .time-ji>span {
+	display: inline-block;
+	font-size: 1.4rem;
+	font-weight: 600;
+	line-height:3rem;
+	font-family: '楷书';
+	color: black;
+	margin: 1rem auto;
+	padding-left:1rem;
+}
+
+.time-yi, .time-ji {
+	font-size: 1.4rem;
+	line-height: 1.6rem;
+	border-bottom:.1rem solid #e9e9e9;
+	margin-bottom:1rem;
+}
+
+.time-day {
+	text-align: center;
+	font-size: 4rem;
+	font-weight: 900;
+}
+
+.time-year-month {
+	text-align: center;
+	font-size: 1.2rem;
+	font-weight: 100;
+}
+
+.time-n-info {
+	text-align: center;
+	margin: 1rem auto;
+}
+
+.time-n-info>span {
+	line-height: 1.8rem;
+	text-align: center;
+	font-size: 1.4rem;
+	font-weight: 500;
+	margin: .5rem auto;
+	padding: 0 .5rem;
+}
+</style>
+	<div th:include="templatelib/androidjs :: js"></div>
+</body>
+<script type="text/javascript">
+	var vue = new Vue({
+		el : '#main',
+		data : {
+			title : $("title").html(),
+			time : {},
+			path : transUrl("")
+		},
+		methods : {
+			init : function() {
+				var that = this;
+				var url = "http://api.huofar.com/v61/7.0/day/yiji?gender=1&tizhi=N";
+				$.get(url, function(r) {
+					r = eval('(' + r + ')');
+					vue.$data.time = r.data;
+				});
+			}
+		},
+		created : function() {
+			this.init();
+		},
+		watch:{
+			articleList:function(){
+				this.$nextTick(function(){
+					img($(".right-article-img-wrap img"),{width:9,height:7});
+					img($(".top-article-img-wrap img"),{width:10.4,height:8});
+					img($(".center-article-img-wrap img"),{width:33,height:10});
+				});
+			}
+		},
+		mounted : function() {
+		}
+	});
+</script>
+</html>

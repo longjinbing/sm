@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+       http://www.springframework.org/schema/beans/spring-beans.xsd">
+     <description>Shiro Configuration</description>  
+
+    <!-- Shiro's main business-tier object for web-enabled applications -->  
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">  
+        <property name="realm" ref="myShiroRealm" />  
+        <property name="cacheManager" ref="cacheManager" />  
+    </bean>  
+
+    <!-- 項目自定义的Realm -->  
+    <bean id="myShiroRealm" class="com.ljb.shiro.UserRealm">  
+        <property name="cacheManager" ref="cacheManager" />  
+    </bean>
+
+    <!-- Shiro Filter -->  
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">  
+        <property name="securityManager" ref="securityManager" />  
+        <property name="loginUrl" value="/account/login" />  
+        <property name="successUrl" value="/" />  
+        <property name="unauthorizedUrl" value="/error" />  
+        <property name="filters">
+            <map>
+                <!--退出过滤器-->
+                <entry key="logout" value-ref="logoutFilter" />
+            </map>
+        </property>
+        <property name="filterChainDefinitions">  
+            <value>
+            <!--对静态资源设置匿名访问-->
+            	/api/**=anon
+                /android/**=anon
+                /cms/**=anon
+                /statics/**=anon
+                /account/**=anon
+                <!--/kaptcha**=anon-->
+                /admin/**=authc
+                <!-- 请求logout.action地址，shiro去清除session -->
+                <!-- /logout=logout  -->
+                <!-- /**=authc 表示所有的url都必须认证通过才可以访问-->
+                
+            </value>  
+        </property>  
+    </bean>  
+
+    <!-- 用户授权信息Cache -->  
+    <bean id="cacheManager" class="org.apache.shiro.cache.MemoryConstrainedCacheManager" />  
+
+    <!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->  
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />  
+
+    <!-- AOP式方法级权限检查 -->  
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"  
+        depends-on="lifecycleBeanPostProcessor">  
+        <property name="proxyTargetClass" value="true" />  
+    </bean>  
+
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">  
+        <property name="securityManager" ref="securityManager" />  
+    </bean> 
+       
+    <!--自定义退出LogoutFilter-->
+    <bean id="logoutFilter" class="com.ljb.filter.SystemLogoutFilter">
+        <property name="redirectUrl" value="/"/>
+    </bean>
+</beans>

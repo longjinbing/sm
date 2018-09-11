@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ljb.mapper.SysSmsLogDao">
+
+    <resultMap type="com.ljb.entity.SysSmsLog" id="sysSmsLogMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="content" column="content"/>
+        <result property="mobile" column="mobile"/>
+        <result property="createTime" column="create_time"/>
+        <result property="sign" column="sign"/>
+        <result property="type" column="type"/>
+        <result property="extno" column="extno"/>
+        <result property="sendStatus" column="send_status"/>
+        <result property="sendId" column="send_id"/>
+        <result property="invalidNum" column="invalid_num"/>
+        <result property="successNum" column="success_num"/>
+        <result property="blackNum" column="black_num"/>
+        <result property="returnMsg" column="return_msg"/>
+    </resultMap>
+
+	<sql id="Base_Column_List">
+		`id`,
+		`user_id`,
+		`content`,
+		`mobile`,
+		`create_time`,
+		`sign`,
+		`type`,
+		`extno`,
+		`send_status`,
+		`send_id`,
+		`invalid_num`,
+		`success_num`,
+		`black_num`,
+		`return_msg`	</sql>
+	<select id="selectOne" parameterType="com.ljb.query.SysSmsLogQuery" resultMap="sysSmsLogMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sys_sms_log
+    <if test="_parameter != null">
+      <include refid="Query_Where_Clause" />
+    </if>
+   	limit 0,1
+  	</select>
+	
+	<select id="selectByQuery" parameterType="com.ljb.query.SysSmsLogQuery" resultMap="sysSmsLogMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sys_sms_log
+    <if test="_parameter != null">
+      <include refid="Query_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  	</select>
+  	
+  	<select id="countByQuery" parameterType="com.ljb.query.SysSmsLogQuery" resultType="java.lang.Integer">
+    select count(*) from sys_region
+    <if test="_parameter != null">
+      <include refid="Query_Where_Clause" />
+    </if>
+  	</select>
+  	
+  	<delete id="deleteByQuery" parameterType="com.ljb.query.SysSmsLogQuery">
+    delete from sys_sms_log
+    <if test="_parameter != null">
+      <include refid="Query_Where_Clause" />
+    </if>
+  	</delete>
+		
+	<sql id="Query_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+         </trim>
+        </if>
+     </foreach>
+    </where>
+  	</sql>
+  		
+</mapper>

@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head th:include="templatelib/css :: css(~{::title},~{::link})">
+<title>首页</title>
+<link rel="stylesheet" th:href="@{/statics/admin/css/admin.css}">
+</head>
+<body>
+	<div id="main">
+		<div class="runtime-count">
+			<div class="panel panel-primary">
+				<div class="panel-heading">
+					<h3 class="panel-title">会员数量</h3>
+				</div>
+				<div class="panel-body">
+					<p class="today-count-text">
+						今日注册会员数:<small class="text-primary">{{runtime.todayUserCount}}</small>
+					</p>
+					<p class="count-text">
+						会员总数：<small class="text-primary">{{runtime.userCount}}</small>
+					</p>
+				</div>
+			</div>
+			<div class="panel panel-success">
+				<div class="panel-heading">
+					<h3 class="panel-title">商城商品数量</h3>
+				</div>
+				<div class="panel-body">
+					<p class="today-count-text">
+						今日新增商品数:<small class="text-success">{{runtime.todayGoodsCount}}</small>
+					</p>
+					<p class="count-text">
+						商城商品总数：<small class="text-success">{{runtime.goodsCount}}</small>
+					</p>
+				</div>
+			</div>
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<h3 class="panel-title">资讯条数</h3>
+				</div>
+				<div class="panel-body">
+					<p class="today-count-text">
+						今日新增文章数:<small class="text-info">{{runtime.todayArticleCount}}</small>
+					</p>
+					<p class="count-text">
+						总文章数：<small class="text-info">{{runtime.articleCount}}</small>
+					</p>
+				</div>
+			</div>
+			<div class="panel panel-danger">
+				<div class="panel-heading">
+					<h3 class="panel-title">订单总数</h3>
+				</div>
+				<div class="panel-body">
+					<p class="today-count-text">
+						今日新增订单数:<small class="text-danger">{{runtime.todayOrderCount}}</small>
+					</p>
+					<p class="count-text">
+						总订单数：<small class="text-danger">{{runtime.orderCount}}</small>
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="runtime-echart">
+			<div class="panel panel-danger">
+				<div class="panel-heading">
+					<h3 class="panel-title">网站近期注册会员数据条形图(总会员数:{{runtime.userCount}}人)</h3>
+				</div>
+				<div class="panel-body">
+					<div id="user-number" style="width: 100%; height: 450px;"></div>
+				</div>
+			</div>
+			<div class="panel panel-danger">
+				<div class="panel-heading">
+					<h3 class="panel-title">
+						网站近期成交订单数据条形图(总订单数:{{runtime.orderCount}})
+					</h3>
+				</div>
+				<div class="panel-body">
+					<div id="goods-number" style="width: 100%; height: 450px;"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div th:include="templatelib/js :: js"></div>
+	<div th:include="templatelib/echarts :: js"></div>
+</body>
+<style>
+.count-text, .today-count-text {
+	display: block;
+	margin: 20px;
+	font-size: 18px;
+}
+
+.count-text>small, .today-count-text>small {
+	font-size: 22px;
+	font-weight: 600;
+	padding: 0 20px;
+}
+
+.runtime-count>div {
+	display: inline-block;
+	vertical-align:top;
+	width: 24.8%;
+}
+.runtime-echart>div{
+	display: inline-block;
+	vertical-align:top;
+	width: 49.8%;
+}
+
+.runtime-staus-title {
+	padding: 10px 10px;
+	font-weight: 600;
+	font-size: 20px;
+	text-align: center;
+}
+
+.runtime-staus-title>small {
+	background: #99CC66;
+	color: white;
+	display: inline-block;
+	width: 30px;
+	height: 30px;
+	text-align: 30px;
+	border-radius: 15px;
+	line-height: 30px;
+}
+
+.runtime-item {
+	width: 49.5%;
+	float: left;
+}
+</style>
+<script th:src="@{/statics/admin/js/admin.js}"></script>
+<script type="text/javascript">
+	var vue = new Vue({
+		el : '#main',
+		data : {
+			userCount : 0,
+			runtime:{},
+			userCount:{},
+			orderCount:{}
+		},
+		methods : {
+			init : function() {
+				var date = new Date();
+		        var year = date.getFullYear();
+		        var month = date.getMonth() + 1;
+		        var strDate = date.getDate();
+				this.runtime.userCount=year+month+strDate;
+				this.runtime.todayUserCount=strDate;
+				this.runtime.articleCount=year/2+month+strDate;
+				this.runtime.todayArticleCount=strDate*2+1;
+				this.runtime.orderCount=year*2+month+strDate;
+				this.runtime.todayOrderCount=strDate+month;
+				this.runtime.goodsCount=year/2+month*2+strDate;
+				this.runtime.todayGoodsCount=strDate+50;
+				this.userCount.name=[];
+				this.userCount.data=[];
+				this.orderCount.name=[];
+				this.orderCount.data=[];
+				date.setDate(date.getDate()-15)
+		        var year = date.getFullYear();
+		        var month = date.getMonth() + 1;
+		        var strDate = date.getDate();
+				for(var i=0;i<16;i++){
+						var name=year+"/"+month+"/"+(strDate+i);
+						this.userCount.name.push(name);
+						this.orderCount.name.push(name);
+						if(i%2==1){
+							var userCount=month/2+strDate+10+i*2;
+							var orderCount=month*2+strDate+5+i*1;
+						}else{
+							var userCount=month/2+strDate+10+i*1;
+							var orderCount=month*2+strDate+10+i*2;
+						}
+						this.userCount.data.push(userCount);
+						this.orderCount.data.push(orderCount);
+				}
+				date = new Date();
+		        var year = date.getFullYear();
+		        var month = date.getMonth() + 1;
+		        var strDate = date.getDate();
+				this.userCount.name.push(year+"/"+month+"/"+strDate);
+				this.orderCount.name.push(year+"/"+month+"/"+strDate);
+				this.userCount.data.push(this.todayUserCount);
+				this.orderCount.data.push(this.todayOrderCount);
+				initEchart("user-number",this.userCount);
+				initEchart("goods-number",this.orderCount);
+			}
+		},
+		created:function(){
+			this.init();
+		}
+	});
+	function initEchart(id,options){
+		var chart = echarts.init(document.getElementById(id));
+		option = {
+
+				xAxis : {
+					type : 'category',
+					data : options.name
+				},
+				yAxis : {
+					type : 'value'
+				},
+				series : [ {
+					data : options.data,
+					type : 'bar',
+					itemStyle : {
+						normal : {
+							color : function(params) {
+								var colorList = [ '#66ccff', '#99CC66', '#0099CC',
+										'#27727B', '#FF9933', '#9BCA63', '#FAD860',
+										'#006699', '#60C0DD' ];
+								return colorList[params.dataIndex]
+							},
+						}
+					}
+				} ]
+			};
+		chart.setOption(option);
+	}
+</script>
+</html>

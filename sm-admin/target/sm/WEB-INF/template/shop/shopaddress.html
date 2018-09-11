@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="templatelib/css :: css(~{::title},~{})" >
+<title>用户地址</title>
+</head>
+<body>
+	<div class="body-content">
+		<div id="content">
+			<div id="toolbar">
+				<div class="searchTextWrap">
+					<select id="searchField" class="searchField">
+						<option value="userId">会员ID</option>
+						<option value="phone">手机</option>
+						<option value="postalCode">邮编</option>
+						<option value="nationalCode">收货地址国家码</option>
+						<option value="provinceName">省</option>
+						<option value="cityName">市</option>
+						<option value="countyName">区</option>
+						<option value="detailInfo">详细收货地址信息</option>
+						<option value="isDefault">是否是默认地址</option>
+					</select> <input class="searchText" id="searchText" type="text" placeholder="搜索">
+					<button type="button" @click="reload " class="btn btn-default">搜索</button>
+				</div>
+				<button shiro:hasPermission="shopaddress:save"
+					type="button" class="btn btn-success" @click="addForm">
+					<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+				</button>
+				<button shiro:hasPermission="shopaddress:update"
+					type="button" class="btn btn-warning" @click="editForm">
+					<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>选择修改
+				</button>
+				<button shiro:hasPermission="shopaddress:details"
+					type="button" class="btn btn-warning" @click="details">详情
+				</button>
+				<button  shiro:hasPermission="shopaddress:delete"
+					type="button" class="btn btn-danger" @click="deleteData">
+					<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>选择删除
+				</button>
+				<div class="btn-group" shiro:hasPermission="shopaddress:export">
+					<button type="button" class="btn btn-primary dropdown-toggle"
+						data-toggle="dropdown">
+						<span class="glyphicon glyphicon-share" aria-hidden="true"></span>导出数据
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu">
+						<li><a @click='exportData("excel")' href="#">导出为Excel</a></li>
+						<li><a @click='exportData("doc")' href="#">导出为WORD</a></li>
+					</ul>
+				</div>
+			</div>
+			<table id="datatable"></table>
+			<div id="formwrap" class="formwrap">
+				<form class="form-horizontal" v-modal="shopAddress" id="modal-form"
+					role="form">
+					<div class="form-group">
+						<label for="会员ID" class="col-sm-2 control-label">会员ID</label>
+						<div class="col-sm-7">
+							<input type="text" class="form-control"
+								v-model="shopAddress.userId"
+								name="userId" id="userId"
+								placeholder="会员ID">
+						</div>
+						<div class="col-md-3"></div>
+					</div>
+					<div class="form-group">
+						<label for="手机" class="col-sm-2 control-label">手机</label>
+						<div class="col-sm-7">
+							<input type="text" class="form-control"
+								v-model="shopAddress.phone"
+								name="phone" id="phone"
+								placeholder="手机">
+						</div>
+						<div class="col-md-3"></div>
+					</div>
+					<div class="form-group">
+						<label for="邮编" class="col-sm-2 control-label">邮编</label>
+						<div class="col-sm-7">
+							<input type="text" class="form-control"
+								v-model="shopAddress.postalCode"
+								name="postalCode" id="postalCode"
+								placeholder="邮编">
+						</div>
+						<div class="col-md-3"></div>
+					</div>
+					<div class="form-group">
+						<label for="收货地址国家码" class="col-sm-2 control-label">收货地址国家码</label>
+						<div class="col-sm-7">
+							<input type="text" class="form-control"
+								v-model="shopAddress.nationalCode"
+								name="nationalCode" id="nationalCode"
+								placeholder="收货地址国家码">
+						</div>
+						<div class="col-md-3"></div>
+					</div>
+					<div class="form-group">
+						<label for="省" class="col-sm-2 control-label">省</label>
+						<div class="col-sm-7">
+							<input type="text" class="form-control"
+								v-model="shopAddress.provinceName"
+								name="provinceName" id="provinceName"
+								placeholder="省">
+						</div>
+						<div class="col-md-3"></div>
+					</div>
+					<div class="form-group">
+						<label for="市" class="col-sm-2 control-label">市</label>
+						<div class="col-sm-7">
+							<input type="text" class="form-control"
+								v-model="shopAddress.cityName"
+								name="cityName" id="cityName"
+								placeholder="市">
+						</div>
+						<div class="col-md-3"></div>
+					</div>
+					<div class="form-group">
+						<label for="区" class="col-sm-2 control-label">区</label>
+						<div class="col-sm-7">
+							<input type="text" class="form-control"
+								v-model="shopAddress.countyName"
+								name="countyName" id="countyName"
+								placeholder="区">
+						</div>
+						<div class="col-md-3"></div>
+					</div>
+					<div class="form-group">
+						<label for="详细收货地址信息" class="col-sm-2 control-label">详细收货地址信息</label>
+						<div class="col-sm-7">
+							<input type="text" class="form-control"
+								v-model="shopAddress.detailInfo"
+								name="detailInfo" id="detailInfo"
+								placeholder="详细收货地址信息">
+						</div>
+						<div class="col-md-3"></div>
+					</div>
+					<div class="form-group">
+						<label for="是否是默认地址" class="col-sm-2 control-label">是否是默认地址</label>
+						<div class="col-sm-7">
+							<input type="text" class="form-control"
+								v-model="shopAddress.isDefault"
+								name="isDefault" id="isDefault"
+								placeholder="是否是默认地址">
+						</div>
+						<div class="col-md-3"></div>
+					</div>
+					<div class="form-group">
+						<div class="col-md-12 text-center">
+							<button type="submit" class="btn btn-success">保存</button>
+							<input type="reset" class="btn btn-primary" value="重置" />
+							<button type="button" class="btn btn-default pull-right  layui-layer-close">关闭</button>
+						</div>
+					</div>
+					<div id="error" class="text-center"></div>
+				</form>
+			</div>
+			<div id="detailswrap" class="detailswrap">
+					<div class="form-group">
+						<label for="会员ID" class="col-sm-3 control-label">会员ID：</label>
+						<div class="col-sm-9">
+							<p class="form-control-static">{{shopAddress.userId}}</p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="手机" class="col-sm-3 control-label">手机：</label>
+						<div class="col-sm-9">
+							<p class="form-control-static">{{shopAddress.phone}}</p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="邮编" class="col-sm-3 control-label">邮编：</label>
+						<div class="col-sm-9">
+							<p class="form-control-static">{{shopAddress.postalCode}}</p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="收货地址国家码" class="col-sm-3 control-label">收货地址国家码：</label>
+						<div class="col-sm-9">
+							<p class="form-control-static">{{shopAddress.nationalCode}}</p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="省" class="col-sm-3 control-label">省：</label>
+						<div class="col-sm-9">
+							<p class="form-control-static">{{shopAddress.provinceName}}</p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="市" class="col-sm-3 control-label">市：</label>
+						<div class="col-sm-9">
+							<p class="form-control-static">{{shopAddress.cityName}}</p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="区" class="col-sm-3 control-label">区：</label>
+						<div class="col-sm-9">
+							<p class="form-control-static">{{shopAddress.countyName}}</p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="详细收货地址信息" class="col-sm-3 control-label">详细收货地址信息：</label>
+						<div class="col-sm-9">
+							<p class="form-control-static">{{shopAddress.detailInfo}}</p>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="是否是默认地址" class="col-sm-3 control-label">是否是默认地址：</label>
+						<div class="col-sm-9">
+							<p class="form-control-static">{{shopAddress.isDefault}}</p>
+						</div>
+					</div>
+			</div>
+		</div>
+	</div>
+	<div th:include="templatelib/js :: js" ></div>
+	<script th:src="@{/statics/shop/shopaddress.js}"></script>
+</body>
+</html>

@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="templatelib/androidcss :: css(~{::title},~{})">
+<title>首页</title>
+</head>
+<body>
+	<div v-cloak id="main" class="main">
+		<div class="content">
+			<div class="goods-activity">
+				<div class="area">
+					<a id=prev class="prevBtn qq" href="javascript:void(0)"></a> <a
+						id=next class="nextBtn qq" href="javascript:void(0)"></a>
+					<div id=js class="js">
+						<div class="box01">
+							<div class="list-item" @click="goodsdetails(item.id)"
+								v-for="(index,item) in picList">
+								<img :class="{ none : index ===0 }" v-if="index < 3"
+									:src="path + item.primaryPicUrl[0]">
+							</div>
+						</div>
+					</div>
+					<div class="bg"></div>
+					<div id=jsNav class=jsNav>
+						<a v-for="(index,item) in picList" v-if="index < 3"
+							class="trigger" :class="{ imgSelected : index === 0}"
+							href="javascript:void(0)"></a>
+					</div>
+				</div>
+			</div>
+			<div class="home-section-title">
+				<span class="title">推荐</span><img class="more"
+					th:src="@{/statics/common/images/more.png}" /><small @click="tizhiurl" class="text tizhi">{{tizhi.name}}</small>
+			</div>
+			<div class="home-section-content">
+				<div class="home-time" @click="url()">
+					<div class="">
+						<p class="time-day">{{time.Day}}</p>
+						<p class="time-year-month">{{time.year}} / {{time.month}}</p>
+						<p class="time-n-info">
+							<span>{{time.n_month}} {{time.n_day}}</span><span>{{time.n_year}}
+								年 </span>
+						</p>
+					</div>
+					<div class="time-yi-ji">
+						<p class="time-yi">
+							<small>宜</small><span>{{time.yi.title}}</span>
+						</p>
+						<p class="time-ji">
+							<small>忌</small><span>{{time.ji.title}}</span>
+						</p>
+					</div>
+				</div>
+				<div class="home-tuijian">
+					<div @click="details(item.id)" v-for="(index,item) in tuijianList"
+						v-if="index < 2" class="home-tuijian-item">
+						<div class="home-tuijian-desc-wrap">
+							<p>{{item.title}}</p>
+						</div>
+						<div class="home-tuijian-img-wrap">
+							<img :src="path + item.url[0]" />
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="home-section-title">
+				<span class="title">生活小贴士</span><small class="text"></small>
+			</div>
+			<div class="home-section-question">
+				<div class="question-item" @click="details(item.id)" v-if="index <5 " v-for="(index,item) in questionList">
+					<div><img class="question-pic" th:src="@{/statics/common/images/questionpic.png}" ><span class="question-title">{{item.title}}</span><img class="question-more" th:src="@{/statics/common/images/more.png}" ></div>
+				</div>
+			</div>
+			<div class="home-section-title">
+				<span class="title">养生妙招</span><small class="text"></small>
+			</div>
+			<div class="home-section-article">
+			<div class="list-wrap">
+				<div class="article-item" @click="details(item.id)"
+					v-for="item in articleList">
+					<div v-if="item.catogryId === 20">
+						<div class="right-article-img-wrap">
+							<img :src="path + item.url[0]" />
+						</div>
+						<div class="right-article-desc-wrap">
+							<div class="right-article-title">{{item.title}}</div>
+							<div class="right-article-character">
+								<span><small>{{item.createTime}}</small></span><span><small>{{item.commentcount}}</small>评</span>
+							</div>
+						</div>
+					</div>
+					<div v-if="item.catogryId === 21">
+						<div class="right-article-desc-wrap">
+							<div class="right-article-title">{{item.title}}</div>
+							<div class="right-article-character">
+								<span><small>{{item.createTime}}</small></span><span><small>{{item.commentcount}}</small>评</span>
+							</div>
+						</div>
+						<div class="right-article-img-wrap">
+							<img :src="path + item.url[0]" />
+						</div>
+					</div>
+					<div v-if="item.catogryId === 19">
+						<div class="top-article-title">{{item.title}}</div>
+						<div class="top-article-img-wrap">
+							<div><img :src="path + item.url[0]" /></div>
+							<div><img :src="path + item.url[1]" /></div>
+							<div><img :src="path + item.url[2]" /></div>
+						</div>
+						<div class="right-article-character">
+								<span><small>{{item.createTime}}</small></span><span><small>{{item.commentcount}}</small>评</span>
+						</div>
+					</div>
+					<div v-if="item.catogryId === 14">
+						<div class="top-article-title">{{item.title}}</div>
+						<div class="center-article-img-wrap">
+							<img :src="path + item.url[0]" />
+						</div>
+						<div class="right-article-character">
+								<span><small>{{item.createTime}}</small></span><span><small>{{item.commentcount}}</small>评</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			</div>
+			
+
+		</div>
+	</div>
+	<style>
+	.question-item{
+	border-bottom:.1rem solid #f9f9f9;
+	padding:.8rem .1rem;
+	}
+	.question-item>div>img,.question-item>div>span{
+	display:inline-block;
+	vertical-align: top;
+	}
+	.question-title{
+	width:26rem;
+	line-height:3rem;
+	height:3rem;
+	overflow:hidden;
+	font-size:1.4rem;
+	font-weight:100;
+	}
+	.question-pic{
+	width:2rem;
+	height:2rem;
+	margin:.5rem 1rem;
+	}
+	.question-more{
+	width:1.5rem;
+	height:1.5rem;
+	margin:.75rem .5rem;
+	}
+.home-tuijian-desc-wrap {
+	
+}
+
+.home-tuijian-item>div {
+	display: inline-block;
+	vertical-align: middle;
+	margin-top: 2rem;
+	width: 8rem;
+}
+
+.home-tuijian-img-wrap {
+	height: 6rem;
+	overflow: hidden;
+}
+
+.home-tuijian-img-wrap>img {
+	width: 6rem;
+	height: 6rem;
+	margin: 0 auto;
+}
+
+.home-tuijian-desc-wrap>p {
+	font-size: 1.4rem;
+	padding: 0 1rem;
+	line-height: 2rem;
+	height: 4rem;
+	overflow: hidden;
+}
+
+.time-yi-ji {
+	padding: 2rem 0 0 0;
+}
+
+.home-time {
+	border-right: .1rem solid #f2f2f2;
+	padding-top: 1rem;
+}
+
+.home-time>div {
+	display: inline-block;
+	vertical-align: top;
+	width: 8rem;
+}
+
+.time-yi>small, .time-ji>small {
+	display: inline-block;
+	width: 2rem;
+	height: 2rem;
+	text-align: center;
+	line-height: 2rem;
+	background: #26a3e1;
+	color: white;
+	border-radius: 1rem;
+	margin: 0 auto;
+	font-size: 1rem;
+}
+
+.time-yi>span, .time-ji>span {
+	display: inline-block;
+	width: 1.4rem;
+	margin: 0 auto;
+	font-size: 1.4rem;
+	font-weight: 100;
+	font-family: '楷书';
+	color: black;
+	margin: 1rem auto;
+}
+
+.time-yi, .time-ji {
+	display: inline-block;
+	vertical-align: top;
+	text-align: center;
+	width: 2rem;
+	font-size: 1.4rem;
+	line-height: 1.6rem;
+}
+
+.time-day {
+	text-align: center;
+	font-size: 4rem;
+	font-weight: 900;
+}
+
+.tizhi-button{
+display:block;
+padding:.5rem 1rem;
+background:#66ccff;
+color:white;
+text-align:center;
+}
+
+.time-year-month {
+	text-align: center;
+	font-size: 1.2rem;
+	font-weight: 100;
+}
+
+.time-n-info {
+	text-align: center;
+	margin: 1rem auto;
+}
+
+.time-n-info>span {
+	display: inline-block;
+	vertical-align: top;
+	width: 1.2rem;
+	line-height: 1.8rem;
+	text-align: center;
+	font-size: 1.4rem;
+	font-weight: 500;
+	margin: .5rem auto;
+	padding: 0 .5rem;
+}
+
+.home-section-content {
+	padding: 1rem 0;
+}
+
+.home-section-content>div {
+	display: inline-block;
+	width: 16.7rem;
+	position: relative;
+	vertical-align: top;
+}
+
+.home-section-title {
+	padding: .5rem 1rem;
+	height: 3rem;
+	border-top: .1rem solid #ededed;
+	border-bottom: .1rem solid #ededed;
+}
+
+.home-section-title>.title {
+	display: blcok;
+	float: left;
+	width: 10rem;
+	height: 3rem;
+	border-left: .4rem solid #06abfe;
+	padding: 0 0 0 1rem;
+	font-size: 1.4rem;
+	font-weight: 300;
+	line-height: 3rem;
+	font-family: "楷书";
+	color: black;
+}
+
+.home-section-title>.text {
+	display: blcok;
+	float: right;
+	width: 17rem;
+	height: 3rem;
+	font-size: 1.2rem;
+	font-weight: 100;
+	line-height: 3rem;
+	font-family: "楷书";
+	color: #66ccff;
+	text-align: right;
+	margin-right:1rem;
+}
+
+.home-section-title>.more {
+	display: blcok;
+	float: right;
+	margin: .3rem auto;
+	width: 2.4rem;
+	height: 2.4rem;
+	width: 2.4rem;
+}
+
+.main {
+	padding: 0;
+}
+
+.none {
+	display: none;
+}
+
+.area {
+	width: 34rem;
+	height: 15rem;
+	margin: 0 auto;
+	overflow: hidden;
+	position: relative;
+	cursor: pointer;
+	margin: 0 auto;
+}
+
+.js {
+	POSITION: relative;
+	WIDTH: 34rem;
+	HEIGHT: 15rem;
+	margin: 0 auto;
+}
+
+.box01 {
+	width: 34rem;
+	height: 15rem;
+	overflow: hidden;
+}
+
+.bg {
+	width: 100%;
+	padding-top: .1rem;
+	height: 2rem;
+	left: 0;
+	FONT-WEIGHT: bold;
+	top: 13rem;
+	position: absolute;
+}
+
+.jsNav {
+	position: absolute;
+	left: 14.75rem;
+	top: 13rem;
+	z-index: 5;
+}
+
+.jsNav a {
+	width: .5rem;
+	height: .5rem;
+	border-radius: .25rem;
+	background: white;
+	margin: 0 .5rem;
+	line-height: .5rem;
+	display: block;
+	float: left;
+}
+
+.jsNav a:hover {
+	color: #FF1555;
+	text-decoration: none;
+}
+
+.jsNav .imgSelected {
+	background: #66ccff;
+}
+
+.qq {
+	display: none;
+	z-index: 200;
+}
+.article-item {
+	width: 33rem;
+	margin: .5rem auto;
+	padding: 1rem .5rem 1rem .5rem;
+	border-radius: 5px;
+	border-bottom: .2rem solid #ededed;
+}
+
+.right-article-desc-wrap, .right-article-img-wrap {
+	display: inline-block;
+	vertical-align: top;
+}
+
+.right-article-desc-wrap {
+	width: 22rem;
+	position: relative;
+}
+
+.right-article-character {
+	height: 2rem;
+	vertical-align: bottom;
+}
+
+.right-article-character>span {
+	display: inline-block;
+	vertical-align: bottom;
+	font-size: .8rem;
+	font-weight: 300;
+	color: #968f8f;
+	margin-right: 1rem;
+}
+
+.right-article-title {
+	font-size: 1.3rem;
+	line-height: 1.8rem;
+	font-weight: 300;
+	height: 5rem;
+}
+
+.right-article-img-wrap {
+	width: 9rem;
+	height: 7rem;
+	margin:0 .5rem;
+	border-radius: .5rem;
+	overflow:hidden;
+}
+
+.right-article-img-wrap>img {
+	width: 100%;
+	height: 100%;
+	border-radius: .5rem;
+}
+
+.top-article-title {
+	font-size: 1.3rem;
+	line-height: 2.2rem;
+	font-weight: 300;
+	margin-bottom:.3rem;
+}
+.top-article-img-wrap {
+	width: 33rem;
+	height: 7rem;
+}
+
+.top-article-img-wrap>div {
+	width: 10.4rem;
+	height: 100%;
+	border-radius: .5rem;
+	margin:0 .1rem;
+	display:inline-block;
+	overflow:hidden;
+}
+.top-article-img-wrap>div>img {
+	width: 10.4rem;
+	height: 100%;
+	overflow:hidden;
+}
+
+.center-article-img-wrap{
+	width: 100%;
+	height: 10rem;
+	border-radius: .5rem;
+	overflow:hidden;
+}
+.center-article-img-wrap>img {
+	width: 100%;
+	height: 100%;
+	border-radius: .5rem;
+}
+</style>
+	<div th:include="templatelib/androidjs :: js"></div>
+</body>
+<script type="text/javascript">
+	var vue = new Vue(
+			{
+				el : '#main',
+				data : {
+					picList : [],
+					tuijianList : [],
+					questionList : [],
+					articleList : [],
+					time : {},
+					tizhi:{
+						name:"还不知道您的体质，测试一下吧"
+					},
+					path : transUrl("")
+				},
+				methods : {
+					init : function() {
+						var that = this;
+						var url = transUrl("/api/shop/goodslist/6");
+						$.get(url, function(r) {
+							if (check(r)) {
+								$.each(r.list.records, function(index, item) {
+									var obj = item;
+									if(item.primaryPicUrl!=null){
+									var url=item.primaryPicUrl.toString();
+									obj.primaryPicUrl=url.split(',');
+									vue.$data.picList.push(obj)
+									}
+								})
+							}
+						});
+						url = transUrl("/api/article/list/22");
+						$.get(url,function(r) {
+							if(check(r)) {
+								$.each(r.page.records,function(index,item) {
+									var obj = item;
+									obj.createTime = transPublishTime(item.createTime);
+									if(item.url!=null){
+										var url = item.url.toString();
+										obj.url = url.split(',');
+									}
+									vue.$data.tuijianList.push(obj)
+								})
+							}
+						});
+						url = "http://api.huofar.com/v61/7.0/day/yiji?gender=1&tizhi=N";
+						$.get(url, function(r) {
+							r = eval('(' + r + ')');
+							vue.$data.time = r.data;
+						});
+						url = transUrl("/api/article/list/13");
+						$.get(url,function(r) {
+											if (check(r)) {
+												$.each(r.page.records,function(index,item) {
+																	var obj = item;
+																	vue.$data.questionList.push(obj)
+																})
+											}
+										});
+						url = transUrl("/api/article/listbyids?ids=14,19,20,21");
+						$.get(url,function(r) {
+							if(check(r)) {
+								$.each(r.page.records,function(index,item) {
+									var obj = item;
+									obj.createTime = transPublishTime(item.createTime);
+									if(item.url!=null){
+										var url = item.url.toString();
+										obj.url = url.split(',');
+									}
+									vue.$data.articleList.push(obj)
+								})
+							}
+					});
+						var url=transUrl("/api/constitution/success");
+						  $.ajax({
+							  url: url,
+							  data: '',
+							  success: function(r){
+								  if(check(r)){
+									  console.log(r)
+									  var id=r.data;
+									//获取结果信息
+										url=transUrl("/constitutionresult/info/");
+										$.get(url+ id, function (r) {
+											if(check(r)){
+											vue.$data.constitutionResult=r.constitutionResult;
+											url=transUrl("/constitution/info/")+r.constitutionResult.constitutionId;
+											$.get(url, function (r) {
+												if(check(r)){
+												vue.$data.tizhi=r.constitution;
+												}
+											});
+											}
+										});
+								  }
+							  },
+							  error:function(r){
+								  var data=r.responseText;
+								  data=eval('('+data+')');
+							  }
+							});
+
+					},
+					details : function(id) {
+						location.href = transUrl("/api/article/article/") + id;
+					},
+					goodsdetails:function(id){
+						location.href = transUrl("/api/shop/goodsdetails/") + id;
+					},
+					url:function(){
+						location.href = transUrl("/android/time.html");
+					},
+					tizhiurl:function(){
+						console.log("体质"+this.tizhi.id)
+						if(this.tizhi.id){
+							location.href = transUrl("/android/success.html");
+						}else{
+							location.href = transUrl("/android/constiutiontest.html");
+						}
+					}
+				},
+				created : function() {
+					this.init();
+				},
+				watch : {
+					picList : function() {
+						this.$nextTick(function() {
+							activity();
+							img($(".box01 img"), {
+								width : 34,
+								height : 15
+							});
+
+						});
+					},
+					articleList:function(){
+						this.$nextTick(function(){
+							img($(".right-article-img-wrap img"),{width:9,height:7});
+							img($(".top-article-img-wrap img"),{width:10.4,height:8});
+							img($(".center-article-img-wrap img"),{width:33,height:10});
+						});
+					}
+				},
+				mounted : function() {
+				}
+			});
+	function activity() {
+		var curr = 0;
+		$("#jsNav a.trigger").each(
+				function(i) {
+					$(this).click(
+							function() {
+								curr = i;
+								$("#js .list-item").eq(i).fadeIn("fast")
+										.siblings("div").fadeOut("fast");
+								$(this).addClass("imgSelected").siblings()
+										.removeClass("imgSelected");
+							});
+				});
+		var timer = setInterval(function() {
+			var go = (curr + 1) % 3;
+			$("#jsNav a.trigger").eq(go).click();
+		}, 3000);
+		$("#js").hover(function() {
+			clearInterval(timer);
+		}, function() {
+			timer = setInterval(function() {
+				var go = (curr + 1) % 3;
+				$("#jsNav a.trigger").eq(go).click();
+			}, 3000);
+		});
+	}
+</script>
+</html>

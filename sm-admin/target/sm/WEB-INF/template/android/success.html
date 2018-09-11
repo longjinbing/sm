@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="templatelib/androidcss :: css(~{::title},~{})">
+<title>我的体质</title>
+</head>
+<body>
+	<div v-cloak id="main" class="main">
+		<header th:include="templatelib/androidcomponent :: header"></header>
+		<div class="content">
+			<div class="constitution-result-wrap">
+				{{constitution.name}}
+			</div>
+			<div class="constitution-section">
+			<div class="constitution-title">测试详情</div>
+			<div class="constitution-section-content">
+				<div id="result-ecahrt"
+														   style="width: 33.4rem; text-center: center; height: 200px;"></div>
+				<div class="constitution-result-type-text">
+					主体质:{{constitution.name}}</span> &nbsp
+					&nbsp 转化体质:{{sresult}}
+				</div>
+			</div>
+			</div>
+			<div class="constitution-section">
+			<div class="constitution-title">{{constitution.name}}的表现</div>
+				<div class="constitution-section-content">
+				<div class="constitution-content" v-html='constitution.desc'></div>
+				</div>
+			</div>
+			<div class="constitution-section">
+			<div  class="constitution-title">特征</div>
+				<div class="constitution-section-content">
+			<div class="constitution-content" v-html='constitution.character'></div>
+			</div>
+		</div>
+			<div class="constitution-section">
+			<div  class="constitution-title">{{constitution.name}}应该怎么调养</div>
+			<div class="constitution-section-content">
+			<div class="constitution-content" v-html='constitution.character'></div>
+			</div>
+			</div>
+			<div class="constitution-section">
+			<div  class="constitution-title">我们为您推荐这些</div>
+				<div class="constitution-section-content">
+			<div class="constitution-content" v-html='constitution.character'></div>
+		</div>
+	</div>
+			<div class="bottom-btn">
+			<a th:href="@{/android/resultrecord.html}">查看往期测试结果</a>
+			<a th:href="@{/android/constiutiontest.html}" >重新测试</a>
+			</div>
+		</div>
+	</div>
+	<style>
+		.bottom-btn{
+			margin-top: 1rem;
+			text-align: center;
+		}
+		.bottom-btn>a{
+			display: inline-block;
+			margin: 0 auto;
+			padding: 1rem 1rem;
+			text-align: center;
+			background: #66ccff;
+			color: white;
+			font-size: 1.4rem;
+			border-radius: .5rem;
+		}
+		.constitution-section{
+			 border:.1rem solid whitesmoke;
+			 width:34rem;
+			 margin:1rem auto;
+		 }
+		.constitution-section-content{
+			border:.3rem solid #66ccff;
+		}
+		.constitution-content>ol{
+			display:block;
+			width:100%;
+			font-size: 1.4rem;
+			font-weight: 300;
+			margin:0 auto;
+		}
+		.constitution-content>ol>li{
+			padding:.2rem 0 .2rem 0rem;
+			font-size: 1.4rem;
+			font-weight: 300;
+			margin:0 0 0 2rem;
+		}
+		.constitution-result-wrap{
+			width:10rem;
+			height:10rem;
+			margin:4rem auto 4rem auto;
+			line-height: 10rem;
+			border-radius: 5rem;
+			background:#66ccff;
+			text-align: center;
+			color:white;
+			box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+		}
+		.constitution-result-type-text{
+			text-align: center;
+			font-size: 1.4rem;
+			font-weight: 100;
+			margin: -30px 5px 20px 5px;
+		}
+		.constitution-title{
+			padding: 1rem .5rem;
+			font-size: 1.4rem;
+			font-weight: 100;
+			border:0;
+			font-family: "楷书";
+			background: #66ccff;
+			color:white;
+		}
+	</style>
+	<div th:include="templatelib/androidjs :: js"></div>
+	<div th:include="templatelib/echarts :: js"></div>
+</body>
+<script>
+var vue=new Vue({
+el:"#main",
+data:{
+	constitutionResult:{},
+	constitution:{},
+	title : $("title").html(),
+	sresult:''
+},
+methods:{
+	init:function(){
+		  var url=transUrl("/api/constitution/success");
+		  $.ajax({
+			  url: url,
+			  data: '',
+			  success: function(r){
+				  if(check(r)){
+					  console.log(r)
+					  var id=r.data;
+					//获取结果信息
+						url=transUrl("/constitutionresult/info/");
+						$.get(url+ id, function (r) {
+							if(check(r)){
+							vue.$data.constitutionResult=r.constitutionResult;
+							url=transUrl("/constitution/info/")+r.constitutionResult.constitutionId;
+							$.get(url, function (r) {
+								if(check(r)){
+								vue.$data.constitution=r.constitution;
+								}
+							});
+							}
+						});
+						url=transUrl("/resultdetails/resultdetails/")+id;
+						$.get(url, function (r) {
+							if(check(r)){
+								var names=r.data.names,results=r.data.results;
+								initEcharts(names,results);
+								vue.$data.sresult=names[1];
+							}
+						});
+				  }
+			  },
+			  error:function(r){
+				  var data=r.responseText;
+				  data=eval('('+data+')');
+				  window.location.href=transUrl("/android/constiutiontest.html");
+			  }
+			});
+		  	
+			
+	}
+},
+created:function(){
+	this.init();
+}
+});
+
+function initEcharts(names,results){
+var myChart = echarts.init(document.getElementById('result-ecahrt'));
+var option = {
+		color: ['#3398DB'],
+	    xAxis: {
+	        type: 'category',
+	        data: names,
+	       	axisLine:{
+				show:false
+		    },
+	        axisTick: {
+		        show:false
+            },
+	        axisLabel : {
+                interval:0,
+                textStyle:{
+                    fontSize:8,
+                    fontWeight:100
+                }
+            }
+	    },
+	    yAxis: {
+	        type: 'value',
+	        show:false
+	    },
+	    series: [{
+	        data: results,
+	        type: 'bar',
+	        itemStyle: {
+                normal: {
+                    color: function(params) {
+                        var colorList = [
+                           '#66ccff','#99CC66','#0099CC','#27727B',
+                           '#FF9933','#9BCA63','#FAD860','#006699','#60C0DD'
+                        ];
+                        return colorList[params.dataIndex]
+                    },
+                }
+            },
+	    }]
+	};
+	myChart.setOption(option);
+}
+</script>
+</html>

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ljb.mapper.ConstitutionResultDao">
+
+    <resultMap type="com.ljb.entity.ConstitutionResult" id="constitutionResultMap">
+        <result property="id" column="id"/>
+        <result property="userId" column="user_id"/>
+        <result property="constitutionId" column="constitution_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createId" column="create_id"/>
+    </resultMap>
+
+	<sql id="Base_Column_List">
+		`id`,
+		`user_id`,
+		`constitution_id`,
+		`create_time`,
+		`create_id`	</sql>
+	
+	<select id="select" resultMap="unionMap">
+		select
+    	constitution_result.`id`,    	constitution_result.`user_id`,    	constitution_result.`constitution_id`,    	constitution_result.`create_time`,		c.`username` as `create_name`		from constitution_result
+		left join sys_user as c on c.`id`=constitution_result.`create_id`
+		where constitution_result.`id` = #{id}
+	</select>
+
+	
+	<select id="selectByPage" resultMap="constitutionResultMap">
+		select
+    		`id`,
+    		`user_id`,
+    		`constitution_id`,
+    		`create_time`,
+		from constitution_result
+		WHERE 1=1
+		<if test="searchText != null and searchText.trim() != ''">
+			AND searchField LIKE concat('%',#{searchText},'%')
+		</if>
+        <choose>
+            <when test="sort != null and sort.trim() != ''">
+                order by ${sort} ${order}
+            </when>
+			<otherwise>
+                order by id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="selectTotal" resultType="int">
+		select count(*) from constitution_result
+		WHERE 1=1
+        <if test="name != null and name.trim() != ''">
+            AND name LIKE concat('%',#{name},'%')
+        </if>
+	</select>
+	
+	<select id="selectOne" parameterType="com.ljb.query.ConstitutionResultQuery" resultMap="constitutionResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from constitution_result
+    <if test="_parameter != null">
+      <include refid="Query_Where_Clause" />
+    </if>
+   	limit 0,1
+  	</select>
+	
+	<select id="selectByQuery" parameterType="com.ljb.query.ConstitutionResultQuery" resultMap="constitutionResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from constitution_result
+    <if test="_parameter != null">
+      <include refid="Query_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  	</select>
+  	
+  	<select id="countByQuery" parameterType="com.ljb.query.ConstitutionResultQuery" resultType="java.lang.Integer">
+    select count(*) from sys_region
+    <if test="_parameter != null">
+      <include refid="Query_Where_Clause" />
+    </if>
+  	</select>
+  	
+  	<delete id="deleteByQuery" parameterType="com.ljb.query.ConstitutionResultQuery">
+    delete from constitution_result
+    <if test="_parameter != null">
+      <include refid="Query_Where_Clause" />
+    </if>
+  	</delete>
+		
+	<sql id="Query_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+         </trim>
+        </if>
+     </foreach>
+    </where>
+  	</sql>
+  	<resultMap type="java.util.HashMap" id="unionMap">
+		<result property="id" column="id"/>
+		<result property="userId" column="user_id"/>
+		<result property="constitutionId" column="constitution_id"/>
+		<result property="createTime" column="create_time"/>
+		<result property="createName" column="create_name"/>
+    </resultMap>
+</mapper>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="templatelib/androidcss :: css(~{::title},~{})">
+<title>订单详情</title>
+</head>
+<body>
+	<div v-cloak id="main" class="main">
+		<header th:include="templatelib/androidcomponent :: header"></header>
+		<div class="content">
+	<section>
+		<div class="order-status-wrap">
+		<p class="order-status-text">{{order.status}}</p>
+		</div>
+		<div v-if="order.status === '待付款'  " class="order-status-btn-wrap">
+		<a class="cancel-order-btn">取消订单</a>
+		<a class="order-pay-btn">去付款</a>
+		</div>
+		<div v-if="order.status === '已付款  " class="order-status-btn-wrap">
+		<a class="cancel-order-btn">确认收货</a>
+		<a class="order-pay-btn">申请退款</a>
+		</div>
+		<div v-if="order.status === '已发货'  " class="order-status-btn-wrap">
+		<a class="cancel-order-btn">确认收货</a>
+		<a class="order-pay-btn">申请退款</a>
+		</div>
+		<div v-if="order.status === '退款中'  " class="order-status-btn-wrap">
+		<a class="cancel-order-btn">确认收货</a>
+		</div>
+	</section>
+	<div class="division-line"></div>
+	<section>
+	<p class="order-info"><span>订单号：</span><small>{{order.orderSn}}</small></p>
+	<p class="order-info"><span>下单时间：</span><small>{{order.createTime}}</small></p>
+	<p class="order-info"><span>收货信息：</span><small>{{order.name}}</small>&nbsp&nbsp<small>{{order.phone}}</small></p>
+	<p class="order-info"><span></span><small>{{order.province}}{{order.city}}{{order.distinct}}{{order.address}}</small></p>
+	</section>
+	<div class="division-line"></div>
+	<section>
+	<div v-for="item in order.list" @click="details(item.goodsId)" class="order-goods-item">
+		<div class="order-goods-item-img-wrap"><img :src="path+item.picUrl" width="60" height="60" /></div>
+	<div class="order-goods-item-desc-wrap">
+	<h5>{{item.title}}</h5>
+	<div><span>￥{{item.price}}</span><small>x{{item.number}}</small></div>
+	</div>
+	</div>
+	</section>
+	<div class="division-line"></div>
+	<section>
+	<div class="order-info-item"><span>配送方式</span><p>普通快递</p></div>
+	</section>
+	
+	<div class="division-line"></div>
+	<section>
+	<div class="order-info-item"><span>商品金额</span><small>￥{{order.goodsPrice}}.00</small></div>
+	<div class="order-info-item"><span>运费</span><small>￥{{order.freightPrice}}.00</small></div>
+	<div class="order-info-item"><span>优惠</span><small>￥{{order.goodsPrice - order.orderPrice}}.00</small></div>
+	<div class="order-info-item"><span>应付金额</span><small>￥{{order.orderPrice}}.00</small></div>
+	</section>
+	<style>
+	.order-info-item{
+	padding:.8rem 0;
+	}
+	.order-info-item>span{
+	display:inline-block;
+	width:30%;
+	color:black;
+	font-size:1.4rem;
+	font-weight:500;
+	}
+	.order-info-item>p{
+	display:inline-block;
+	width:60%;
+	color:black;
+	text-align:right;
+	font-size:1.4rem;
+	color:#66ccff;
+	font-weight:500;
+	}
+	.order-info-item>small{
+	display:inline-block;
+	width:67%;
+	color:black;
+	text-align:right;
+	color:red;
+	font-weight:500;
+	}
+	.order-goods-item{
+	width:32rem;
+	height:8rem;
+	margin:1rem auto;
+	}
+	.order-goods-item-img-wrap{
+	width:8rem;
+	height:8rem;
+	text-align:center;
+	overflow:hidden;
+	border:.1rem solid #edecec;
+	margin:auto;
+	border-radius:.5rem;
+	}
+	.order-goods-item-img-wrap,.order-goods-item-desc-wrap{
+	display:inline-block;
+	vertical-align:top;
+	}
+	.order-goods-item-img-wrap>div{
+	margin:auto;
+	}
+	.order-goods-item-desc-wrap{
+	width:22rem;
+	margin-left:1rem;
+	}
+	.order-goods-item-desc-wrap>h5{
+	height:3.6rem;
+	line-height:1.8rem;
+	overflow:hidden;
+	color:black;
+	font-weight:200;
+	font-size:1.4rem;
+	}
+	.order-goods-item-desc-wrap>div>span{
+	color:red;
+	display:inline-block;
+	width:50%;
+	font-size:1.2rem;
+	line-height:30px;
+	}
+	.order-goods-item-desc-wrap>div>small{
+	display:inline-block;
+	width:40%;
+	line-height:30px;
+	padding-right:20px;
+	font-size:1.2rem;
+	color: #c8c5c5;
+	text-align:right;
+	}
+	section{
+	padding:1.5rem 1rem;
+	}
+	.order-info{
+	padding:.2rem 0px;
+	color:#454545;;
+	font-weight:400;
+	}
+	.order-info>span{
+	display:inline-block;
+	width:6rem;
+	font-size:1.2rem;
+	}
+	.order-status-wrap{
+	display:inline-block;
+	width:30%;
+	text-align:left;
+	}
+	.order-status-btn-wrap{
+	display:inline-block;
+	float:right;
+	width:70%;
+	text-align:right;
+	}
+	.order-status-text{
+	color:#f56d6d;
+	font-size:16px;
+	line-height:30px;
+	}
+	.order-status-desc{
+	color:#ababab;
+	font-size:12px;
+	font-weight:500;
+	}
+	.cancel-order-btn,.order-pay-btn{
+	display:inline-block;
+	height:2.5rem;
+	width:7rem;
+	font-size:1.2rem;
+	text-align:center;
+	border:.1rem solid #f56d6d;
+	line-height:2.5rem;
+	border-radius:1rem;
+	}
+	.cancel-order-btn{
+	color:#f56d6d;
+	}
+	.order-pay-btn{
+	background:#f56d6d;
+	color:white;;
+	}
+	
+	</style>
+	</div>
+	
+	</div>
+	<div th:include="templatelib/androidjs :: js"></div>
+	<script th:src="@{/statics/android/tab.js}"></script>
+</body>
+<script type="text/javascript">
+	var vue = new Vue({
+		el : '#main',
+		data : {
+			title : $("title").html(),
+			order : {},
+			path : transUrl("")
+		},
+		methods : {
+			init : function() {
+				var id="[[${id}]]";
+				var that = this;
+				var url = transUrl("/api/shop/orderdetails/")+id;
+				$.get(url, function(r) {
+					if (check(r)) {
+						vue.$data.order = r.data;
+						
+					}
+				});
+			},
+			details : function(id) {
+				location.href = transUrl("/api/shop/goodsdetails/") + id;
+			}
+		},
+		created : function() {
+			this.init();
+		},
+		mounted : function() {
+		},
+		watch:{
+			order:{
+					handler: function (newVal) {
+							var obj=vue.$data.order;
+							switch(obj.status){
+							case 1:
+								obj.status="待付款";
+								break;
+							case 2:
+								obj.status="已付款";
+								break;
+							case 3:
+								obj.status="已发货";
+								break;
+							case 3:
+								obj.status="订单完成";
+								break;
+							case 4:
+								obj.status="退款审核中";
+								break;
+							case 5:
+								obj.status="已取消";
+								break;
+							}
+							vue.$data.order=obj;  
+							this.$nextTick(function(){
+							img($(".order-goods-item img"),{
+								width:8,
+								height:8
+							})
+								
+							})
+					},
+					deep: true    //深度监听
+					} 
+			}
+	});
+</script>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="templatelib/androidcss :: css(~{::title},~{})">
+<title>我的收藏</title>
+</head>
+<body>
+	<div v-cloak id="main" class="main">
+		<header th:include="templatelib/androidcomponent :: header"></header>
+		<div class="content">
+		<div class="tips">您近期没有收藏商品</div>
+		
+</div>
+	</div>
+	<div th:include="templatelib/androidjs :: js"></div>
+	<script th:src="@{/statics/android/tab.js}"></script>
+</body>
+<script type="text/javascript">
+	var vue = new Vue({
+		el : '#main',
+		data : {
+			title : $("title").html(),
+			path : transUrl("")
+		},
+		methods : {
+			init : function() {
+				var that = this;
+			},
+			details : function(id) {
+			}
+		},
+		created : function() {
+			this.init();
+		},
+		mounted : function() {
+		},
+		watch:{
+		}
+	});
+</script>
+</html>

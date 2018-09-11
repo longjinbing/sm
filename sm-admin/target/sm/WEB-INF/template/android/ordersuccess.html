@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="templatelib/androidcss :: css(~{::title},~{})" >
+<title>订单提交结果</title>
+</head>
+<body>
+	<div v-cloak id="main" class="main">
+		<header th:include="templatelib/androidcomponent :: header"></header>
+		<div class="content">
+			<h3 style="margin-top:50px;" class="text-center text-warning"></h3>
+			<div class="tips">恭喜您，订单提交成功</div>
+			<a style="margin-top:50px; width:30%; margin:auto;"  href="js://webview?action=goBack" class="btn-primary center-block">继续下单</a>
+		</div>
+	</div>
+	<div th:include="templatelib/androidjs :: js" ></div>
+	<div th:include="templatelib/echarts :: js" ></div>
+</body>
+<script>
+var vue=new Vue({
+el:"#main",
+data:{
+	title:$("title").html()
+}
+});
+</script>
+</html>

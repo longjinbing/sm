@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="templatelib/androidcss :: css(~{::title},~{})">
+<title>商城</title>
+</head>
+<body>
+
+	<div v-cloak id="main" class="main">
+		<header th:include="templatelib/androidcomponent :: header"></header>
+		<div class="content">
+			<div class="goods-activity">
+				<div class="area">
+					<a id=prev class="prevBtn qq" href="javascript:void(0)"></a> <a
+						id=next class="nextBtn qq" href="javascript:void(0)"></a>
+					<div id=js class="js">
+						<div class="box01">
+							<div class="list-item" @click="details(item.id)" v-for="(index,item) in picList">
+								<img :class="{ none : index ===0 }" v-if="index < 3"
+									:src="path + item.primaryPicUrl[0]">
+							</div>
+						</div>
+					</div>
+					<div class="bg"></div>
+					<div id=jsNav class=jsNav>
+						<a v-for="(index,item) in picList" v-if="index < 3"
+							class="trigger" :class="{ imgSelected : index === 0}"
+							href="javascript:void(0)"></a>
+					</div>
+				</div>
+
+			</div>
+		</div>
+		<div class="goods-more-character">
+			<button @click='url()'>
+				<img th:src="@{/statics/common/images/category.png}"><small>全部分类</small>
+			</button>
+			<button @click='url("/android/orders.html")'>
+				<img th:src="@{/statics/common/images/order.png}"><small>我的订单</small>
+			</button>
+			<button @click='url("/android/cart.html")'>
+				<img th:src="@{/statics/common/images/cart.png}"><small>购物车</small>
+			</button>
+			<button @click="url()">
+				<img th:src="@{/statics/common/images/tuijian.png}"><small>好货推荐</small>
+			</button>
+		</div>
+		<p class="goods-section-title">促销专场</p>
+		<div class="goods-miaosha">
+			<div v-for="(index,item) in miaoshaList" @click="details(item.id)" v-if="index < 4">
+				<img :src="path + item.primaryPicUrl[0]">
+				<span class="goods-miaosha-price">¥{{item.price}}</span>
+			</div>
+		</div>
+		<p  class="goods-section-title">为您精选</p>
+		<div class="list-wrap">
+			<div class="goods-item" @click="details(item.id)"
+				v-for="item in goodsList">
+				<div class="goods-img-wrap">
+					<img :src="path + item.primaryPicUrl[0]" />
+				</div>
+				<div class="goods-desc-wrap">
+					<div class="goods-title">{{item.title}}</div>
+					<h5 class="goods-price">
+						¥{{item.price}}
+					</h5>
+					<div class="goods-character">
+						<span class="category-sign">{{item.categoryName}}</span> <span
+							class="category-sign" v-if="item.shippingFee === 0">包邮</span> <span
+							class="goods-comment">{{item.sellNumber}}条评价</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	</div>
+	<style>
+	.goods-section-title{
+	padding:1rem .5rem;
+	border-top:.1rem solid #e7e7e7;
+	border-left:1rem solid #66ccff;
+	border-bottom:.1rem solid #e7e7e7;;
+	font-size:1.2rem;
+	font-weight:500;
+	margin:1rem auto;
+	}
+	.goods-miaosha-price{
+	display:block;
+	text-align:center;
+	height:2rem;
+	line-height:2rem;
+	font-size:1rem;
+	color:#f66969;
+	}
+.goods-miaosha>div{
+display:inline-block;
+width:7.9rem;
+height:10rem;
+border-left:.3rem solid white;
+border-right:.25rem solid white;
+}
+.goods-miaosha>div{
+border-radius:.5rem;
+overflow:hidden;
+}
+.goods-more-character{
+margin:1rem auto;
+}
+.goods-more-character>button {
+	display: inline-block;
+	width: 7rem;
+	height: 7rem;
+	border: 0;
+	padding: .2rem .2rem;
+	background: white;
+	color: black;
+	font-size: 1.3rem;
+	color: #656161;
+	font-weight: 100;
+	margin: 0 .55rem;
+}
+
+.goods-more-character>button>img {
+	display: block; 
+	width : 4rem;
+	height:4rem;
+	margin: .3rem auto;
+}
+
+.goods-activity {
+	
+}
+
+.activeli {
+	display: block;
+}
+
+.none {
+	display: none;
+}
+
+.area {
+	width: 34rem;
+	height: 12rem; margin : 0 auto;
+	overflow: hidden;
+	position: relative;
+	cursor: pointer;
+	margin: 0 auto;
+}
+
+.js {
+	POSITION: relative;
+	WIDTH: 34rem;
+	HEIGHT: 12rem;
+	margin: 0 auto;
+}
+
+.box01 {
+	width: 34rem;
+	height: 12rem;
+	overflow: hidden;
+}
+
+.bg {
+	width: 100%;
+	padding-top: .1rem;
+	height: 2rem;
+	left: 0;
+	FONT-WEIGHT: bold;
+	top: 10rem;
+	position: absolute;
+}
+
+.jsNav {
+	position: absolute;
+	left: 14.75rem;
+	top: 10rem;
+	z-index: 5;
+}
+
+.jsNav a {
+	width: .5rem;
+	height: .5rem;
+	border-radius: .25rem;
+	background: white;
+	margin: 0 .5rem;
+	line-height: .5rem;
+	display: block;
+	float: left;
+}
+
+.jsNav a:hover {
+	color: #FF1555;
+	text-decoration: none;
+}
+
+.jsNav .imgSelected {
+	background: #66ccff;
+}
+
+.qq {
+	display: none;
+	z-index: 200;
+}
+
+.goods-comment {
+	font-size: .7rem;
+	font-weight: 100;
+	color: #b9adad;;
+	line-height: 1.3rem;
+	margin-left: 2rem;
+}
+
+.goods-item {
+	width: 16.8rem;
+	float: left;
+	padding: 1rem 0 1rem 0;
+	border: .1rem solid #d8d8d8;
+}
+
+.goods-img-wrap {
+	width: 14rem;
+	height: 14rem;
+	margin: auto;
+}
+
+.goods-img-wrap>img {
+	border-radius: 5px;
+	width: 100%;
+	height: 100%;
+	box-shadow: 0 0 30px 10px rgba(255, 255, 255, .7) inset;
+}
+
+.goods-desc-wrap {
+	padding: 0 1rem;
+}
+
+.goods-title {
+	height: 2rem;
+	font-size: 1.2rem;
+	line-height: 2rem;
+	margin: .5rem 0 1rem 0;
+	overflow: hidden;
+}
+
+.goods-price, .goods-character {
+	display: inline-block;
+	line-height: 1rem;
+	vertical-align: top;
+}
+
+.goods-price {
+	color: #ef0a0a;
+	font-weight: 300;
+	font-family: "楷书";
+	font-size:1.4rem;
+	line-height: 1.4rem;
+}
+
+.goods-character>span {
+	display: inline-block;
+	vertical-align: top;
+}
+</style>
+	<div th:include="templatelib/androidjs :: js"></div>
+	<script th:src="@{/statics/common/js/jqthumb.min.js}"></script>
+</body>
+<script type="text/javascript">
+	var vue = new Vue({
+		el : '#main',
+		data : {
+			title : $("title").html(),
+			goodsList : [],
+			picList:[],
+			miaoshaList:[],
+			path : transUrl("")
+		},
+		methods : {
+			init : function() {
+				var that = this;
+				var url = transUrl("/api/shop/goodslist/4");
+				$.get(url, function(r) {
+					if (check(r)) {
+						$.each(r.list.records, function(index, item) {
+							var obj = item;
+							if(item.primaryPicUrl!=null){
+							var url=item.primaryPicUrl.toString();
+							obj.primaryPicUrl=url.split(',');
+							vue.$data.picList.push(obj)
+							}
+						})
+					}
+				});
+				url = transUrl("/api/shop/goodslist/5");
+				$.get(url, function(r) {
+					if (check(r)) {
+						$.each(r.list.records, function(index, item) {
+							var obj = item;
+							if(item.primaryPicUrl!=null){
+							var url=item.primaryPicUrl.toString();
+							obj.primaryPicUrl=url.split(',');
+							vue.$data.miaoshaList.push(obj)
+							}
+						})
+					}
+				});
+				url = transUrl("/api/shop/goodslist?offset=0&limit=30");
+				$.get(url, function(r) {
+					if (check(r)) {
+						$.each(r.list,function(index,item){
+							if( item.categoryId != "4" && item.categoryId != "5"&& item.categoryId != "6"){
+									var obj = item;
+									if(item.primaryPicUrl!=null){
+									var url=item.primaryPicUrl.toString();
+									obj.primaryPicUrl=url.split(',');
+									vue.$data.goodsList.push(obj)
+									}
+							}
+						})
+					}
+				});
+			},
+			details : function(id) {
+				location.href = transUrl("/api/shop/goodsdetails/") + id;
+			},
+			url:function(url){
+				if(url == undefined){
+					tip("页面维护中，暂时无法访问");
+				}else{
+					window.location.href=transUrl(url);
+				}
+			}
+		},
+		created : function() {
+			this.init();
+		},
+		watch : {
+			picList : function() {
+				this.$nextTick(function() {
+					activity()
+					img($(".box01 img"), {
+						width : 34,
+						height : 12
+					});
+					
+				});
+			},
+			miaoshaList : function() {
+			this.$nextTick(function() {
+				img($(".goods-miaosha img"),{
+					width:8,
+					height:8
+				})
+			});
+		},
+			goodsList : function() {
+				this.$nextTick(function() {
+					img($(".goods-img-wrap img"),{
+						width:14,
+						height:14
+					})
+				});
+			}
+		},
+		mounted : function() {
+		}
+	});
+	function activity() {
+		var curr = 0;
+		$("#jsNav a.trigger").each(
+				function(i) {
+					$(this).click(
+							function() {
+								curr = i;
+								$("#js .list-item").eq(i).fadeIn("fast")
+										.siblings("div").fadeOut("fast");
+								$(this).addClass("imgSelected").siblings()
+										.removeClass("imgSelected");
+							});
+				});
+		var timer = setInterval(function() {
+			var go = (curr + 1) % 3;
+			$("#jsNav a.trigger").eq(go).click();
+		}, 3000);
+		$("#js").hover(function() {
+			clearInterval(timer);
+		}, function() {
+			timer = setInterval(function() {
+				var go = (curr + 1) % 3;
+				$("#jsNav a.trigger").eq(go).click();
+			}, 3000);
+		});
+	}
+</script>
+</html>

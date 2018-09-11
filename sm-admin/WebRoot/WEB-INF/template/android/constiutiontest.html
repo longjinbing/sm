@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="templatelib/androidcss :: css(~{::title},~{})">
+<title>体质测试</title>
+</head>
+<body>
+	<div v-cloak id="main" class="main">
+		<header th:include="templatelib/androidcomponent :: header"></header>
+		<div class="content">
+			<div class="small-title">请认真回答下列问题:</div>
+			<div class="question-container">
+			<form id="questionform" th:action="@{/api/constitution/saveresult}" method="POST">
+			<div class="question" :class="{ currentquestion : index === 0 }" v-for="(index,item) in questionList">
+				<div class="panel">
+					<div class="panel-heading">
+						<span class="question-no">{{index+1}}</span><span class="real-title">{{item.question}}</span>
+					</div>
+					<div class="panel-body">
+						<ul class="list-group question-options">
+						    <li class="list-group-item" value="1"><small>没有</small><img th:src="@{/statics/common/images/questionselect.png}" /></li>
+							<li class="list-group-item" value="3"><small>很少</small><img th:src="@{/statics/common/images/questionselect.png}" /></li>
+							<li class="list-group-item" value="5"><small>有时</small><img th:src="@{/statics/common/images/questionselect.png}" /></li>
+							<li class="list-group-item" value="7"><small>经常</small><img th:src="@{/statics/common/images/questionselect.png}" /></li>
+							<li class="list-group-item" value="9"><small>总是</small><img th:src="@{/statics/common/images/questionselect.png}" /></li>
+						</ul>
+						<input class="result" :name="item.id" type="hidden">
+					</div>
+				</div>
+			</div>
+			</form>
+			</div>
+			
+			<div class="answer-container">
+				<div class="small-title">测试进程:</div>
+				<ul>
+					<li class="answer-item text-center" v-for="(index,item) in questionList"><small>{{index+1}}</small><img th:src="@{/statics/common/images/answerselect.png}" /></li>
+				</ul>
+			</div>
+	</div>
+	</div>
+	<div th:include="templatelib/androidjs :: js"></div>
+	<script th:src="@{/statics/android/constiutiontest.js}"></script>
+	<style>
+		.small-title {
+			padding:.5rem .5rem;
+			font-weight: 300;
+			border-bottom:.2rem solid #f0f0f0;
+			margin:.5rem 0 .5rem 0;
+			font-family: '楷书';
+			font-size:1.2rem;
+		}
+	.list-group-item {
+    position: relative;
+    display: block;
+	padding:1rem 1.5rem .6rem 1.5rem;
+    margin-bottom: -1px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+}
+.list-group-item:first-child {
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+}
+	.panel {
+    margin-bottom: 20px;
+    background-color: #fff;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
+}
+.panel-heading {
+    padding: 10px 15px;
+    border-bottom: 1px solid transparent;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+}
+.question-container {
+	width: 100%;
+}
+.question{
+width:33rem;
+padding:.5rem;
+display:none;
+margin:0 auto;
+}
+.currentquestion{
+display:block;
+}
+.question-no{
+display:inline-block;
+width:20px;
+height:20px;
+border-radius:10px;
+blackground:white;
+}
+.question .panel-body{
+padding:0;
+}
+.question .panel-heading{
+color:white;
+}
+.question .list-group{
+margin:0;
+}
+.question .panel{
+margin:0;
+background:#66ccff;
+}
+
+.question-options{
+list-style:none;
+padding:0;
+}
+
+.question-options>li:hover>img{
+display:inline-block;
+color:#66ccff;
+}
+.list-group-item>small,.list-group-item>img{
+display:inline-block;
+vertical-align:top;
+height:2rem;
+}
+.list-group-item>img{
+display:none;
+text-align:right;
+width:2rem;
+height:2rem;
+position:absolute;
+right:1rem;
+}
+.select>img{
+display:inline-block;
+color:#66ccff;
+}
+.answer-container{
+width:100%;
+padding:0px 5px 10px 5px;
+position:fixed;
+bottom:0;
+	background: #f9f9f9;
+}
+.answer-container ul{
+padding:0;
+list-style:none;
+
+}
+.answer-container>ul>li{
+display:block;
+float:left;
+width:2rem;
+height:2rem;
+line-height:2rem;
+text-align:center;
+border-radius:3px;
+font-size:1rem;
+color:rgb(155, 127, 127);;
+border:.1rem solid rgb(221, 221, 221);
+}
+.answer-container>ul>li:hover{
+color:white;
+background:#66ccff;
+
+}
+.answer-item>img{
+display:none;
+}
+.complete>small{
+display:none;
+}
+.complete>img{
+display:block;
+width:.8rem;
+height:.8rem;
+margin:.6rem auto;
+}
+
+</style>
+</body>
+</html>

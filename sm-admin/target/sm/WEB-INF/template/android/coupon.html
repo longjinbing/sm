@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head th:include="templatelib/androidcss :: css(~{::title},~{})">
+<title>我的优惠卷</title>
+</head>
+<body>
+	<div v-cloak id="main" class="main">
+		<header th:include="templatelib/androidcomponent :: header"></header>
+		<div class="content">
+		<section class="aui-scrollView">
+			<div class="aui-tab" data-ydui-tab="">
+				<ul class="tab-nav">
+					<li class="tab-nav-item tab-active"><a href="javascript:;">全部</a></li>
+					<li class="tab-nav-item"><a href="javascript:;">优惠卷</a></li>
+					<li class="tab-nav-item"><a href="javascript:;">已过期</a></li>
+					<li class="tab-nav-item"><a href="javascript:;">已使用</a></li>
+				</ul>
+				<div class="divHeight"></div>
+				<div class="tab-panel">
+					<div class="tab-panel-item tab-active">
+						<div class="tips">系统暂时没有发放优惠卷，请稍后关注</div>
+						
+					</div>
+					<div class="tab-panel-item">
+						<div class="tips">您还没有可用的优惠卷</div>
+						
+					</div>
+					<div class="tab-panel-item">
+						<div class="tips">没有过期的优惠卷</div>
+						
+					</div>
+					<div class="tab-panel-item">
+						<div class="tips">没有已使用的优惠卷</div>
+						
+					</div>
+				</div>
+			</div>
+		</section>
+</div>
+	</div>
+	<div th:include="templatelib/androidjs :: js"></div>
+	<script th:src="@{/statics/android/tab.js}"></script>
+</body>
+<script type="text/javascript">
+	var vue = new Vue({
+		el : '#main',
+		data : {
+			title : $("title").html(),
+			path : transUrl("")
+		},
+		methods : {
+			init : function() {
+				var that = this;
+			},
+			details : function(id) {
+			}
+		},
+		created : function() {
+			this.init();
+		},
+		mounted : function() {
+		},
+		watch:{
+		}
+	});
+</script>
+</html>
