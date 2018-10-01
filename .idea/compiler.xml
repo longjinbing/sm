@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="sm-admin" />
+        <module name="sm-cms" />
+        <module name="sm-common" />
+        <module name="sm-constitution" />
+        <module name="sm-generator" />
+        <module name="sm-shop" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="sm" target="1.8" />
+      <module name="sm-admin" target="1.8" />
+      <module name="sm-cms" target="1.8" />
+      <module name="sm-common" target="1.8" />
+      <module name="sm-constitution" target="1.8" />
+      <module name="sm-generator" target="1.8" />
+      <module name="sm-shop" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

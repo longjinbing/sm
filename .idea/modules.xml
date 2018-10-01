@@ -3,6 +3,12 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/sm.iml" filepath="$PROJECT_DIR$/.idea/sm.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sm-admin/sm-admin.iml" filepath="$PROJECT_DIR$/sm-admin/sm-admin.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sm-cms/sm-cms.iml" filepath="$PROJECT_DIR$/sm-cms/sm-cms.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sm-common/sm-common.iml" filepath="$PROJECT_DIR$/sm-common/sm-common.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sm-constitution/sm-constitution.iml" filepath="$PROJECT_DIR$/sm-constitution/sm-constitution.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sm-generator/sm-generator.iml" filepath="$PROJECT_DIR$/sm-generator/sm-generator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sm-shop/sm-shop.iml" filepath="$PROJECT_DIR$/sm-shop/sm-shop.iml" />
     </modules>
   </component>
 </project>
